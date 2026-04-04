@@ -1,0 +1,114 @@
+name: E-Shop API Tests
+version: "1.0"
+baseUrl: https://api.eshop.example.com
+variables:
+  baseUrl: https://api.eshop.example.com
+  apiVersion: v1
+auth:
+  type: bearer
+  token: "{{accessToken}}"
+folders:
+  - name: Products
+    path: /products
+    requests:
+      - info:
+          name: List All Products
+          type: http
+          seq: 1
+        http:
+          method: GET
+          url: https://api.eshop.example.com/v1/products
+          params:
+            page: "1"
+            limit: "20"
+            sort: name
+        runtime:
+          scripts:
+            - type: tests
+              code: |-
+                test("should return 200", function() {
+                  expect(res.status).to.equal(200);
+                });
+                test("should have products array", function() {
+                  expect(res.body.products).to.be.an("array");
+                });
+
+      - info:
+          name: Get Product Details
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: https://api.eshop.example.com/v1/products/123
+        runtime:
+          scripts:
+            - type: tests
+              code: |-
+                test("should return 200", function() {
+                  expect(res.status).to.equal(200);
+                });
+                test("should have product id", function() {
+                  expect(res.body.id).to.equal(123);
+                });
+
+  - name: Cart
+    path: /cart
+    requests:
+      - info:
+          name: Add Item to Cart
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: https://api.eshop.example.com/v1/cart/items
+          body:
+            type: json
+            data: |-
+              {
+                "productId": 123,
+                "quantity": 2
+              }
+          headers:
+            Content-Type: application/json
+        runtime:
+          scripts:
+            - type: tests
+              code: |-
+                test("should return 201", function() {
+                  expect(res.status).to.equal(201);
+                });
+                test("should return cart item", function() {
+                  expect(res.body.itemId).to.exist;
+                });
+
+      - info:
+          name: Get Cart Contents
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: https://api.eshop.example.com/v1/cart
+        runtime:
+          scripts:
+            - type: tests
+              code: |-
+                test("should return 200", function() {
+                  expect(res.status).to.equal(200);
+                });
+
+requests:
+  - info:
+      name: Health Check
+      type: http
+      seq: 1
+    http:
+      method: GET
+      url: https://api.eshop.example.com/health
+    runtime:
+      scripts:
+        - type: tests
+          code: |-
+            test("API is healthy", function() {
+              expect(res.status).to.equal(200);
+              expect(res.body.status).to.equal("healthy");
+            });

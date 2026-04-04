@@ -1,0 +1,24 @@
+info:
+  name: Create User
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: https://api.example.com/users
+  body:
+    type: json
+    data: |-
+      {
+        "name": "John Doe",
+        "email": "john@example.com"
+      }
+  auth: inherit
+  headers:
+    X-Custom-Header: test-value
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return 201", function() {
+          expect(res.status).to.equal(201);
+        });
