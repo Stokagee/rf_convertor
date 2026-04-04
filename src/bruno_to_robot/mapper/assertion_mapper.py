@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from typing import Any
 
 from bruno_to_robot.models.robot import RobotStep
 
@@ -170,7 +169,6 @@ class AssertionMapper:
     def _map_body_exist(self, match: re.Match) -> RobotStep:
         """Map body property existence assertion."""
         prop_path = match.group(1)
-        robot_path = self._build_json_path(prop_path)
 
         return RobotStep(
             keyword="Dictionary Should Contain Key",

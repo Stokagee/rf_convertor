@@ -32,7 +32,9 @@ class TestRequestMapper:
         # First step should be the request
         request_step = tc.steps[0]
         assert "GET On Session" in request_step.keyword
-        assert "test_api" in request_step.args
+        assert "alias=test_api" in request_step.args
+        assert "url=/users" in request_step.args
+        assert "expected_status=anything" in request_step.args
 
     def test_map_simple_post(self, simple_post_fixture: str, mapper: RequestMapper):
         """Map a POST request with body."""
@@ -42,7 +44,9 @@ class TestRequestMapper:
         suites = mapper.map_collection(collection, split_by_folder=False)
         tc = suites[0].test_cases[0]
 
-        request_step = tc.steps[0]
+        # Find the request step (should be POST On Session)
+        request_step = next((s for s in tc.steps if "On Session" in s.keyword), None)
+        assert request_step is not None
         assert "POST On Session" in request_step.keyword
 
         # Should have body argument

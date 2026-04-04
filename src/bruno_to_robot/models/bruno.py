@@ -33,6 +33,7 @@ class BodyType(str, Enum):
     TEXT = "text"
     XML = "xml"
     FORM = "form"
+    FORM_URLENCODED = "form-urlencoded"
     MULTIPART = "multipart"
     GRAPHQL = "graphql"
     NONE = "none"
@@ -86,6 +87,7 @@ class BrunoRequest(BaseModel):
     type: str = "http"
     seq: int = 1
     http: BrunoHttp
+    docs: str | None = None  # Documentation/description for the request
     runtime: BrunoRuntime | None = None
     settings: BrunoSettings | None = None
     # For folder structure

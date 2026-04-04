@@ -31,7 +31,7 @@ class RobotGenerator:
         """Create Jinja2 environment with Robot Framework-specific settings."""
         env = Environment(
             loader=FileSystemLoader(self.template_dir),
-            autoescape=select_autoescape(enabled_extensions=("robot.jinja",)),
+            autoescape=False,  # Robot Framework doesn't need HTML escaping
             trim_blocks=True,
             lstrip_blocks=True,
             keep_trailing_newline=True,
@@ -76,7 +76,7 @@ class RobotGenerator:
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Check if file exists and content is identical (idempotency)
-        if output_path.exists():
+        if output_path.exists() and output_path.is_file():
             existing = output_path.read_text(encoding="utf-8")
             if existing == content:
                 logger.info(f"No changes to {output_path}")

@@ -10,7 +10,6 @@ import click
 
 from bruno_to_robot import __version__
 from bruno_to_robot.generator.robot_generator import RobotGenerator
-from bruno_to_robot.mapper.auth_mapper import AuthMapper
 from bruno_to_robot.mapper.request_mapper import RequestMapper
 from bruno_to_robot.parser.json_parser import JsonParser
 from bruno_to_robot.parser.yaml_parser import ParseError, YamlParser
@@ -138,11 +137,7 @@ def main(
         logger.info(f"Parsing {input_path} as {input_format.upper()}")
 
         # Parse input
-        if input_format == "yaml":
-            parser = YamlParser()
-        else:
-            parser = JsonParser()
-
+        parser = YamlParser() if input_format == "yaml" else JsonParser()
         collection = parser.parse_file(input_path)
         logger.info(f"Parsed collection: {collection.name} ({len(collection.requests)} requests)")
 
@@ -162,10 +157,10 @@ def main(
         if dry_run:
             click.echo("Dry run - would generate:")
             for suite in suites:
-                if split or len(suites) == 1:
-                    out_file = output_path if not output_path.is_dir() else output_path / f"{suite.name.lower().replace(' ', '_')}.robot"
-                else:
+                if output_path.is_dir() or split or len(suites) > 1:
                     out_file = output_path / f"{suite.name.lower().replace(' ', '_')}.robot"
+                else:
+                    out_file = output_path
                 click.echo(f"  - {out_file}: {len(suite.test_cases)} tests")
             return
 
@@ -175,7 +170,7 @@ def main(
 
         # Generate files
         for suite in suites:
-            if split or len(suites) > 1:
+            if output_path.is_dir() or split or len(suites) > 1:
                 out_file = output_path / f"{suite.name.lower().replace(' ', '_')}.robot"
             else:
                 out_file = output_path
@@ -185,7 +180,7 @@ def main(
 
         # Generate resource file if requested
         if resource_path:
-            from bruno_to_robot.models.robot import RobotResource, RobotVariable
+            from bruno_to_robot.models.robot import RobotResource
 
             # Collect all variables from all suites
             all_vars = {}

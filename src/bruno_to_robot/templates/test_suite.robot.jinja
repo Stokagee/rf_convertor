@@ -3,62 +3,54 @@
   Generates a .robot file from a RobotSuite model.
 -#}
 *** Settings ***
-{%- for imp in suite.imports %}
+{% for imp in suite.imports %}
 Library           {{ imp }}
-{%- endfor %}
-{%- if suite.settings.get("resource") %}
-
+{% endfor %}
+{% if suite.settings.get("resource") %}
 Resource          {{ suite.settings["resource"] }}
-{%- endif %}
-{%- if suite.settings.get("suite_setup") %}
-
+{% endif %}
+{% if suite.settings.get("suite_setup") %}
 Suite Setup       {{ suite.settings["suite_setup"] }}
-{%- endif %}
-{%- if suite.settings.get("suite_teardown") %}
-
+{% endif %}
+{% if suite.settings.get("suite_teardown") %}
 Suite Teardown    {{ suite.settings["suite_teardown"] }}
-{%- endif %}
-
-{%- if suite.variables %}
+{% endif %}
+{% if suite.variables %}
 
 *** Variables ***
-{%- for var in suite.get_sorted_variables() %}
+{% for var in suite.get_sorted_variables() %}
 {{ var.to_robot_line() }}
-{%- endfor %}
-{%- endif %}
-
-{%- if suite.keywords %}
+{% endfor %}
+{% endif %}
+{% if suite.keywords %}
 
 *** Keywords ***
-{%- for kw_name, kw_steps in suite.keywords.items() %}
-
+{% for kw_name, kw_steps in suite.keywords.items() %}
 {{ kw_name }}
-{%- for step in kw_steps %}
+{% for step in kw_steps %}
     {{ step.to_robot_line() }}
-{%- endfor %}
-{%- endfor %}
-{%- endif %}
-
-{%- if suite.test_cases %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% if suite.test_cases %}
 
 *** Test Cases ***
-{%- for tc in suite.get_sorted_test_cases() %}
-
+{% for tc in suite.get_sorted_test_cases() %}
 {{ tc.name }}
-{%- if tc.documentation %}
+{% if tc.documentation %}
     [Documentation]    {{ tc.documentation }}
-{%- endif %}
-{%- if tc.tags %}
+{% endif %}
+{% if tc.tags %}
     [Tags]    {{ tc.get_sorted_tags() | join('    ') }}
-{%- endif %}
-{%- if tc.setup %}
+{% endif %}
+{% if tc.setup %}
     [Setup]    {{ tc.setup }}
-{%- endif %}
-{%- for step in tc.steps %}
+{% endif %}
+{% for step in tc.steps %}
     {{ step.to_robot_line() }}
-{%- endfor %}
-{%- if tc.teardown %}
+{% endfor %}
+{% if tc.teardown %}
     [Teardown]    {{ tc.teardown }}
-{%- endif %}
-{%- endfor %}
-{%- endif %}
+{% endif %}
+{% endfor %}
+{% endif %}

@@ -62,3 +62,4 @@ pabot_results/
 # output/
 # tests/generated/
 zprava-hluboky-vyzkum (2).md
+.claude/settings.local.json

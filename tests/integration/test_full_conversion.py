@@ -26,7 +26,7 @@ Resource          {{ suite.settings["resource"] }}
 {%- endif %}
 
 *** Variables ***
-{%- for var in suite.get_sorted_variables() %}
+{% for var in suite.get_sorted_variables() %}
 {{ var.to_robot_line() }}
 {%- endfor %}
 

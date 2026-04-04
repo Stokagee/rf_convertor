@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from bruno_to_robot.models.bruno import AuthType, BrunoAuth
 from bruno_to_robot.models.robot import RobotStep, RobotVariable
 

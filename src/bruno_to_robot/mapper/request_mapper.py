@@ -4,18 +4,15 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Any
+from urllib.parse import urlparse
 
 from bruno_to_robot.models.bruno import (
-    AuthType,
-    BrunoAuth,
-    BrunoBody,
+    BodyType,
     BrunoBody,
     BrunoCollection,
     BrunoFolder,
     BrunoHttp,
     BrunoRequest,
-    BodyType,
     HttpMethod,
 )
 from bruno_to_robot.models.robot import RobotStep, RobotSuite, RobotTestCase, RobotVariable
@@ -37,6 +34,12 @@ class RequestMapper:
         HttpMethod.OPTIONS: "OPTIONS On Session",
     }
 
+    # Session aliases for different URL patterns
+    SESSION_ALIASES = {
+        "api": "BASE_URL",
+        "auth": "AUTH_URL",
+    }
+
     def __init__(
         self,
         session_name: str = "api",
@@ -47,6 +50,8 @@ class RequestMapper:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+        # Will be populated during mapping
+        self.url_sessions: dict[str, str] = {}  # base_url -> session_alias
 
     def map_collection(
         self,
@@ -62,6 +67,9 @@ class RequestMapper:
         Returns:
             List of RobotSuite models
         """
+        # Detect all base URLs from variables and requests
+        self._detect_url_sessions(collection)
+
         suites = []
 
         if split_by_folder and collection.folders:
@@ -81,6 +89,109 @@ class RequestMapper:
 
         return suites
 
+    def _detect_url_sessions(self, collection: BrunoCollection) -> None:
+        """Detect all unique base URLs and assign session aliases."""
+        # Reset sessions for fresh detection
+        self.url_sessions = {}
+
+        # Extract URL variables from collection
+        url_vars = {}
+        for var in collection.variables:
+            var_lower = var.name.lower()
+            if "url" in var_lower and var.value:
+                url_vars[var.name.upper()] = str(var.value)
+
+        # Map known URL patterns to session aliases
+        # Use self.session_name as the primary session alias
+        if "BASE_URL" in url_vars:
+            self.url_sessions[url_vars["BASE_URL"]] = self.session_name
+        if "AUTH_URL" in url_vars:
+            self.url_sessions[url_vars["AUTH_URL"]] = "auth"
+
+        # Also check collection.base_url
+        if collection.base_url:
+            self.url_sessions[collection.base_url] = self.session_name
+
+        # Scan all requests for unique base URLs
+        all_requests = list(collection.requests)
+        for folder in collection.folders:
+            all_requests.extend(self._collect_folder_requests(folder))
+
+        first_unknown = True
+        for request in all_requests:
+            url = request.http.url
+            if url and "://" in url:
+                base = self._extract_base_from_url(url)
+
+                # Check if URL starts with any known variable URL
+                matched = False
+                for var_url, alias in list(self.url_sessions.items()):
+                    if url.startswith(var_url):
+                        matched = True
+                        break
+
+                if not matched and base and base not in self.url_sessions:
+                    # First unknown base uses primary session name
+                    if first_unknown:
+                        self.url_sessions[base] = self.session_name
+                        first_unknown = False
+                    else:
+                        # Generate a session alias for subsequent bases
+                        alias = self._generate_session_alias(base)
+                        self.url_sessions[base] = alias
+
+    def _collect_folder_requests(self, folder: BrunoFolder) -> list[BrunoRequest]:
+        """Recursively collect all requests from folder."""
+        requests = list(folder.requests)
+        for nested in folder.folders:
+            requests.extend(self._collect_folder_requests(nested))
+        return requests
+
+    def _extract_base_from_url(self, url: str) -> str | None:
+        """Extract base URL (scheme + host + port) from full URL."""
+        if "://" not in url:
+            return None
+        parsed = urlparse(url)
+        return f"{parsed.scheme}://{parsed.netloc}"
+
+    def _generate_session_alias(self, base_url: str) -> str:
+        """Generate a session alias from base URL."""
+        parsed = urlparse(base_url)
+        # Use port or domain as alias
+        if parsed.port:
+            return f"srv_{parsed.port}"
+        # Use domain without TLD
+        domain = parsed.hostname or "unknown"
+        parts = domain.split(".")
+        return parts[0] if parts else "srv"
+
+    def _get_session_for_url(self, url: str) -> tuple[str, str]:
+        """Get session alias and relative path for a URL.
+
+        Returns:
+            Tuple of (session_alias, relative_path)
+        """
+        if not url:
+            return (self.session_name, "/")
+
+        # If URL is already relative
+        if "://" not in url:
+            return (self.session_name, url if url.startswith("/") else f"/{url}")
+
+        # Extract base URL
+        base = self._extract_base_from_url(url)
+        if base and base in self.url_sessions:
+            alias = self.url_sessions[base]
+            path = url[len(base):] or "/"
+            return (alias, path)
+
+        # Unknown base URL - use default session
+        parsed = urlparse(url)
+        path = parsed.path or "/"
+        if parsed.query:
+            path = f"{path}?{parsed.query}"
+        return (self.session_name, path)
+
     def _map_single_suite(self, collection: BrunoCollection) -> RobotSuite:
         """Map entire collection to single suite."""
         variables = self._extract_variables(collection)
@@ -97,11 +208,79 @@ class RequestMapper:
                 tc = self._map_request(request, collection, folder)
                 test_cases.append(tc)
 
+        # Generate keywords for all detected sessions
+        keywords = self._generate_session_keywords()
+
+        # Settings for suite setup/teardown
+        settings = {
+            "suite_setup": "Create All Sessions",
+            "suite_teardown": "Delete All Sessions",
+        }
+
         return RobotSuite(
             name=self._sanitize_name(collection.name),
             variables=variables,
             test_cases=test_cases,
+            keywords=keywords,
+            settings=settings,
         )
+
+    def _generate_session_keywords(self) -> dict[str, list[RobotStep]]:
+        """Generate keywords for session management."""
+        keywords = {}
+
+        # Track unique aliases to avoid duplicates
+        seen_aliases = set()
+
+        # Generate individual session creation keywords
+        for base_url, alias in sorted(self.url_sessions.items(), key=lambda x: x[1]):
+            if alias in seen_aliases:
+                continue
+            seen_aliases.add(alias)
+
+            var_name = self._get_url_variable_for_alias(alias)
+            keyword_name = f"Create {alias.title()} Session"
+            keywords[keyword_name] = [
+                RobotStep(
+                    keyword="Create Session",
+                    args=[
+                        f"alias={alias}",
+                        f"url=${{{var_name}}}",
+                        "verify=${TRUE}",
+                    ],
+                )
+            ]
+
+        # Generate Create All Sessions keyword
+        all_session_steps = []
+        seen_aliases = set()
+        for base_url, alias in sorted(self.url_sessions.items(), key=lambda x: x[1]):
+            if alias in seen_aliases:
+                continue
+            seen_aliases.add(alias)
+
+            var_name = self._get_url_variable_for_alias(alias)
+            all_session_steps.append(
+                RobotStep(
+                    keyword="Create Session",
+                    args=[
+                        f"alias={alias}",
+                        f"url=${{{var_name}}}",
+                        "verify=${TRUE}",
+                    ],
+                )
+            )
+        keywords["Create All Sessions"] = all_session_steps
+
+        return keywords
+
+    def _get_url_variable_for_alias(self, alias: str) -> str:
+        """Get the URL variable name for a session alias."""
+        alias_to_var = {
+            "api": "BASE_URL",
+            "auth": "AUTH_URL",
+        }
+        return alias_to_var.get(alias, f"{alias.upper()}_URL")
 
     def _map_folder(
         self,
@@ -121,10 +300,21 @@ class RequestMapper:
             nested_suite = self._map_folder(collection, nested)
             test_cases.extend(nested_suite.test_cases)
 
+        # Generate keywords for all detected sessions
+        keywords = self._generate_session_keywords()
+
+        # Settings for suite setup/teardown
+        settings = {
+            "suite_setup": "Create All Sessions",
+            "suite_teardown": "Delete All Sessions",
+        }
+
         return RobotSuite(
             name=self._sanitize_name(folder.name),
             variables=variables,
             test_cases=test_cases,
+            keywords=keywords,
+            settings=settings,
         )
 
     def _map_root_requests(self, collection: BrunoCollection) -> RobotSuite:
@@ -136,10 +326,21 @@ class RequestMapper:
             tc = self._map_request(request, collection)
             test_cases.append(tc)
 
+        # Generate keywords for all detected sessions
+        keywords = self._generate_session_keywords()
+
+        # Settings for suite setup/teardown
+        settings = {
+            "suite_setup": "Create All Sessions",
+            "suite_teardown": "Delete All Sessions",
+        }
+
         return RobotSuite(
             name=self._sanitize_name(collection.name),
             variables=variables,
             test_cases=test_cases,
+            keywords=keywords,
+            settings=settings,
         )
 
     def _map_request(
@@ -152,9 +353,9 @@ class RequestMapper:
         steps = []
         http = request.http
 
-        # Build request step
-        request_step = self._build_request_step(http, collection)
-        steps.append(request_step)
+        # Build request steps (may include Create Dictionary for headers)
+        request_steps = self._build_request_step(http, collection)
+        steps.extend(request_steps)
 
         # Build assertion steps
         assertion_steps = self._build_assertion_steps(request)
@@ -163,72 +364,138 @@ class RequestMapper:
         # Extract tags
         tags = self._extract_tags(request, folder)
 
+        # Use docs from Bruno request, or fall back to generic message
+        documentation = request.docs or f"Converted from Bruno request: {request.name}"
+
         return RobotTestCase(
             name=self._sanitize_name(request.name),
             tags=tags,
             steps=steps,
-            documentation=f"Converted from Bruno request: {request.name}",
+            documentation=documentation,
         )
 
     def _build_request_step(
         self,
         http: BrunoHttp,
         collection: BrunoCollection,
-    ) -> RobotStep:
-        """Build the main request step."""
+    ) -> list[RobotStep]:
+        """Build request step(s) including header setup if needed.
+
+        Returns a list of steps:
+        - Optional: Create Dictionary step for form data
+        - Optional: Create Dictionary step for custom headers
+        - Main request step
+        """
+        steps = []
         keyword = self.METHOD_KEYWORDS.get(http.method, "GET On Session")
 
+        # Determine the correct session alias based on URL
+        session_alias, url_path = self._get_session_for_url(http.url)
+
+        # If collection has base_url and URL matches, use relative path
+        if collection.base_url and http.url.startswith(collection.base_url):
+            url_path = self._extract_path(http.url, collection.base_url)
+
+        # Handle form-urlencoded body - create dictionary first
+        body_ref = None
+        if http.body and http.body.type == BodyType.FORM:
+            if isinstance(http.body.data, dict):
+                dict_args = [f"{k}={v}" for k, v in sorted(http.body.data.items())]
+                steps.append(RobotStep(
+                    keyword="Create Dictionary",
+                    args=dict_args,
+                    assign="${form_data}",
+                ))
+                body_ref = "data=${form_data}"
+
+        # Handle custom headers - create dictionary
+        headers_ref = "${DEFAULT_HEADERS}"
+        if http.headers:
+            # Merge default headers with request-specific headers
+            merged_headers = {**self.default_headers, **http.headers}
+            dict_args = [f"{k}={v}" for k, v in sorted(merged_headers.items())]
+            steps.append(RobotStep(
+                keyword="Create Dictionary",
+                args=dict_args,
+                assign="${headers}",
+            ))
+            headers_ref = "${headers}"
+
+        # Build main request args
         args = [
-            self.session_name,  # session alias
-            self._extract_path(http.url, collection.base_url),  # endpoint
+            f"alias={session_alias}",
+            f"url={url_path}",
         ]
 
         # Add body
-        if http.body and http.body.type != BodyType.NONE:
+        if body_ref:
+            args.append(body_ref)
+        elif http.body and http.body.type != BodyType.NONE:
             body_arg = self._format_body(http.body)
             if body_arg:
                 args.append(body_arg)
 
-        # Add headers
-        headers = {**self.default_headers, **http.headers}
-        if headers:
-            headers_str = self._format_headers(headers)
-            args.append(f"headers={headers_str}")
+        # Add headers reference
+        args.append(f"headers={headers_ref}")
 
         # Add query params
         if http.params:
             params_str = self._format_params(http.params)
             args.append(f"params={params_str}")
 
-        return RobotStep(
+        # Add expected_status to allow any status code (we'll assert afterwards)
+        args.append("expected_status=anything")
+
+        steps.append(RobotStep(
             keyword=keyword,
             args=args,
             assign="${resp}",
-        )
+        ))
 
-    def _format_body(self, body: BrunoBody) -> str:
+        return steps
+
+    def _format_body(self, body: BrunoBody) -> str | None:
         """Format body for Robot keyword argument."""
+        import json
+
         if body.type == BodyType.JSON:
-            # JSON body
+            # JSON body - ensure single line
             if isinstance(body.data, dict):
-                # Convert to Robot dict syntax
-                items = [f"{k}={repr(v)}" for k, v in body.data.items()]
-                return f"json={{{', '.join(items)}}}"
+                json_str = json.dumps(body.data, separators=(",", ":"))
+                return f"json={json_str}"
             elif isinstance(body.data, str):
-                return f"json={body.data}"
+                try:
+                    parsed = json.loads(body.data)
+                    json_str = json.dumps(parsed, separators=(",", ":"))
+                    return f"json={json_str}"
+                except (json.JSONDecodeError, ValueError):
+                    return f"json={body.data}"
+            elif body.raw:
+                try:
+                    parsed = json.loads(body.raw)
+                    json_str = json.dumps(parsed, separators=(",", ":"))
+                    return f"json={json_str}"
+                except (json.JSONDecodeError, ValueError):
+                    return f"json={body.raw}"
         elif body.type == BodyType.TEXT:
             return f"data={repr(body.raw or body.data)}"
         elif body.type == BodyType.FORM:
-            return f"data={repr(body.data)}"
+            # Form data is handled via Create Dictionary in _build_request_step
+            return None
         elif body.type == BodyType.MULTIPART:
             return f"files={repr(body.data)}"
 
-        return ""
+        return None
 
     def _format_headers(self, headers: dict[str, str]) -> str:
-        """Format headers dict for Robot."""
+        """Format headers for Robot Framework.
+
+        Returns a dictionary variable reference or creates inline dictionary.
+        """
+        # Create dictionary items in Robot format
         items = [f"{k}={v}" for k, v in sorted(headers.items())]
-        return f"&{{{', '.join(items)}}}"
+        # Use &{} syntax to create dictionary inline
+        return f"&{{{ '    '.join(items) }}}"
 
     def _format_params(self, params: dict[str, str]) -> str:
         """Format query params for Robot."""
@@ -236,23 +503,55 @@ class RequestMapper:
         return f"&{{{', '.join(items)}}}"
 
     def _extract_path(self, url: str, base_url: str | None) -> str:
-        """Extract path from URL, removing base URL if present."""
+        """Extract path from URL, removing base URL if present.
+
+        Handles cases where:
+        - URL starts with base_url
+        - URL has different host but same path prefix
+        - URL is already a relative path
+        """
         if not url:
             return "/"
 
+        # If URL is relative, use as-is
+        if not url.startswith(("http://", "https://")):
+            return url if url.startswith("/") else f"/{url}"
+
+        # Try exact base_url match first
         if base_url and url.startswith(base_url):
             path = url[len(base_url) :]
             return path if path else "/"
 
-        # If URL is absolute, extract path
+        # Extract path from absolute URL
         if "://" in url:
             # Parse URL and extract path
             parts = url.split("://", 1)[-1].split("/", 1)
             if len(parts) > 1:
-                return "/" + parts[1]
+                path = "/" + parts[1]
+
+                # Try to strip common base path from collection
+                if base_url:
+                    # Extract path portion from base_url
+                    base_path = self._get_path_from_url(base_url)
+                    if base_path and path.startswith(base_path):
+                        remaining = path[len(base_path) :]
+                        return remaining if remaining else "/"
+
+                return path
             return "/"
 
         return url
+
+    def _get_path_from_url(self, url: str) -> str:
+        """Extract just the path portion from a URL."""
+        if not url:
+            return ""
+
+        if "://" in url:
+            parts = url.split("://", 1)[-1].split("/", 1)
+            return "/" + parts[1] if len(parts) > 1 else ""
+
+        return url if url.startswith("/") else f"/{url}"
 
     def _build_assertion_steps(self, request: BrunoRequest) -> list[RobotStep]:
         """Build assertion steps from Bruno test scripts."""
@@ -337,6 +636,7 @@ class RequestMapper:
     ) -> list[RobotVariable]:
         """Extract variables from collection."""
         variables = []
+        seen_names = set()
 
         # Base URL
         if collection.base_url:
@@ -346,10 +646,21 @@ class RequestMapper:
                     value=collection.base_url,
                 )
             )
+            seen_names.add("BASE_URL")
 
-        # Collection variables
+        # Collection variables (skip base_url as it's already added)
         for var in collection.variables:
             rf_name = self._bruno_var_to_robot(var.name)
+
+            # Skip base_url variants - already added above
+            if rf_name.upper() in ("BASE_URL", "BASEURL"):
+                continue
+
+            # Skip duplicates
+            if rf_name in seen_names:
+                continue
+            seen_names.add(rf_name)
+
             value = var.value
 
             if var.secret:
@@ -363,6 +674,18 @@ class RequestMapper:
                     comment="Secret - set via environment" if var.secret else None,
                 )
             )
+
+        # Generate URL variables for detected sessions that don't have variables
+        for base_url, alias in self.url_sessions.items():
+            var_name = self._get_url_variable_for_alias(alias)
+            if var_name not in seen_names:
+                variables.append(
+                    RobotVariable(
+                        name=var_name,
+                        value=base_url,
+                    )
+                )
+                seen_names.add(var_name)
 
         # Default headers as dict variable
         variables.append(

@@ -56,8 +56,9 @@ class TestYamlParser:
     def test_parse_invalid_yaml_raises_error(self):
         """Invalid YAML should raise ParseError."""
         parser = YamlParser()
+        # Use truly invalid YAML (unmatched brackets)
         with pytest.raises(ParseError):
-            parser.parse(":::invalid:::yaml:::")
+            parser.parse("[unclosed\n  - broken")
 
     def test_parse_extracts_variables(self, collection_fixture: str):
         """Variables should be extracted from collection."""
