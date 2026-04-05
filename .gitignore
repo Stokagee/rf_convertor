@@ -63,3 +63,4 @@ pabot_results/
 # tests/generated/
 zprava-hluboky-vyzkum (2).md
 .claude/settings.local.json
+output/security_lab.robot

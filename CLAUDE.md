@@ -163,7 +163,7 @@ Create User
     [Tags]    api    post
     ${body}=    Create Dictionary    name=John Doe    email=john@example.com
     ${resp}=    POST On Session    api    /users    json=${body}    headers=${DEFAULT_HEADERS}
-    Should Be Equal As Integers    ${resp.status_code}    201
+    Should Be True    ${resp.status_code} < 400    Check for 2xx/3xx status
 ```
 
 ## Testing

@@ -400,7 +400,19 @@ class RequestMapper:
         body_ref = None
         if http.body and http.body.type == BodyType.FORM:
             if isinstance(http.body.data, dict):
-                dict_args = [f"{k}={v}" for k, v in sorted(http.body.data.items())]
+                form_dict = {}
+                for key, value in sorted(http.body.data.items()):
+                    # Replace hardcoded values with variable references
+                    if self._is_secret_form_field(key, value) and hasattr(self, "_form_var_map"):
+                        var_ref = self._get_form_variable(key, value)
+                        if var_ref:
+                            form_dict[key] = var_ref
+                        else:
+                            form_dict[key] = value
+                    else:
+                        form_dict[key] = value
+
+                dict_args = [f"{k}={v}" for k, v in sorted(form_dict.items())]
                 steps.append(RobotStep(
                     keyword="Create Dictionary",
                     args=dict_args,
@@ -412,7 +424,27 @@ class RequestMapper:
         headers_ref = "${DEFAULT_HEADERS}"
         if http.headers:
             # Merge default headers with request-specific headers
-            merged_headers = {**self.default_headers, **http.headers}
+            merged_headers = {**self.default_headers}
+            for key, value in http.headers.items():
+                # Replace hardcoded Bearer tokens with variable references
+                if key.lower() == "authorization" and value.startswith("Bearer "):
+                    token_value = value[7:]  # Remove "Bearer " prefix
+                    token_var = self._get_token_variable(token_value)
+                    if token_var:
+                        merged_headers[key] = f"Bearer {token_var}"
+                    else:
+                        # Token not extracted as variable, keep as-is
+                        merged_headers[key] = value
+                # Replace other secret header values with variables
+                elif self._is_secret_header(key, value) and hasattr(self, "_header_var_map"):
+                    var_ref = self._get_header_variable(key, value)
+                    if var_ref:
+                        merged_headers[key] = var_ref
+                    else:
+                        merged_headers[key] = value
+                else:
+                    merged_headers[key] = value
+
             dict_args = [f"{k}={v}" for k, v in sorted(merged_headers.items())]
             steps.append(RobotStep(
                 keyword="Create Dictionary",
@@ -648,6 +680,13 @@ class RequestMapper:
             )
             seen_names.add("BASE_URL")
 
+        # Extract Bearer tokens from all requests
+        token_vars = self._extract_bearer_tokens(collection)
+        for var in token_vars:
+            if var.name not in seen_names:
+                variables.append(var)
+                seen_names.add(var.name)
+
         # Collection variables (skip base_url as it's already added)
         for var in collection.variables:
             rf_name = self._bruno_var_to_robot(var.name)
@@ -697,6 +736,177 @@ class RequestMapper:
         )
 
         return variables
+
+    def _extract_bearer_tokens(
+        self, collection: BrunoCollection
+    ) -> list[RobotVariable]:
+        """Extract ALL hardcoded values from requests and create variables.
+
+        Returns list of variables to add to suite variables.
+        """
+        all_vars = []
+        seen_values = set()
+
+        # Initialize all extraction maps
+        if not hasattr(self, "_token_var_map"):
+            self._token_var_map = {}
+        if not hasattr(self, "_header_var_map"):
+            self._header_var_map = {}
+        if not hasattr(self, "_form_var_map"):
+            self._form_var_map = {}
+
+        # Collect all requests
+        all_requests = list(collection.requests)
+        for folder in collection.folders:
+            all_requests.extend(self._collect_folder_requests(folder))
+
+        # Counters for different value types
+        token_counter = 1
+        header_counter = 1
+        form_counter = 1
+
+        for request in all_requests:
+            if not request.http:
+                continue
+
+            http = request.http
+
+            # 1. Extract Bearer tokens from headers
+            if http.headers:
+                for key, value in http.headers.items():
+                    if key.lower() == "authorization" and value.startswith("Bearer "):
+                        token_value = value[7:]  # Remove "Bearer " prefix
+                        if token_value and token_value not in seen_values and not token_value.startswith("${"):
+                            seen_values.add(token_value)
+                            var_name = f"AUTH_TOKEN_{token_counter}"
+                            token_counter += 1
+                            all_vars.append(
+                                RobotVariable(
+                                    name=var_name,
+                                    value=None,  # Don't expose the value
+                                    comment="Auth token - set via environment or OAuth2",
+                                )
+                            )
+                            self._token_var_map[token_value] = var_name
+
+                    # 2. Extract other header values that look like secrets/tokens
+                    elif self._is_secret_header(key, value):
+                        if value and value not in seen_values and not value.startswith("${"):
+                            seen_values.add(value)
+                            var_name = self._make_header_var_name(key, header_counter)
+                            header_counter += 1
+                            all_vars.append(
+                                RobotVariable(
+                                    name=var_name,
+                                    value=None,  # Don't expose the value
+                                    comment=f"Header value - set manually",
+                                )
+                            )
+                            if not hasattr(self, "_header_var_map"):
+                                self._header_var_map = {}
+                            self._header_var_map[(key, value)] = var_name
+
+            # 3. Extract form data values
+            if http.body and http.body.type == BodyType.FORM and isinstance(http.body.data, dict):
+                for key, value in http.body.data.items():
+                    if value and isinstance(value, str) and value not in seen_values and not value.startswith("${"):
+                        # Check if it looks like a secret or important value
+                        if self._is_secret_form_field(key, value):
+                            seen_values.add(value)
+                            var_name = self._make_form_var_name(key, form_counter)
+                            form_counter += 1
+                            all_vars.append(
+                                RobotVariable(
+                                    name=var_name,
+                                    value=None,  # Don't expose the value
+                                    comment=f"Form field - set manually",
+                                )
+                            )
+                            if not hasattr(self, "_form_var_map"):
+                                self._form_var_map = {}
+                            self._form_var_map[(key, value)] = var_name
+
+        return all_vars
+
+    def _is_secret_header(self, key: str, value: str) -> bool:
+        """Check if header value should be extracted as variable."""
+        secret_patterns = [
+            "token", "secret", "key", "auth", "password", "csrf"
+        ]
+        key_lower = key.lower()
+
+        # Check if header name suggests it's a secret
+        for pattern in secret_patterns:
+            if pattern in key_lower:
+                return True
+
+        # Check if value looks like a token/hash
+        if len(value) > 20 and all(c.isalnum() or c in "-_" for c in value):
+            return True
+
+        return False
+
+    def _is_secret_form_field(self, key: str, value: str) -> bool:
+        """Check if form field should be extracted as variable."""
+        # Always extract these fields
+        extract_fields = [
+            "client_id", "client_secret", "code", "code_verifier",
+            "redirect_uri", "username", "password", "grant_type"
+        ]
+        key_lower = key.lower()
+
+        for field in extract_fields:
+            if field in key_lower:
+                return True
+
+        # Extract long values that look like tokens
+        if len(value) > 20 and all(c.isalnum() or c in "-_:" for c in value):
+            return True
+
+        return False
+
+    def _make_header_var_name(self, key: str, counter: int) -> str:
+        """Create a variable name for a header value."""
+        # Convert header name to variable name
+        clean = key.upper().replace("-", "_").replace(" ", "_")
+        return f"{clean}_{counter}"
+
+    def _make_form_var_name(self, key: str, counter: int) -> str:
+        """Create a variable name for a form field."""
+        # Convert field name to variable name
+        clean = key.upper().replace("-", "_").replace(" ", "_")
+        return f"{clean}_{counter}"
+
+    def _get_token_variable(self, token_value: str) -> str | None:
+        """Get variable name for a token value.
+
+        Returns variable reference like ${AUTH_TOKEN_1} or None if not found.
+        """
+        if hasattr(self, "_token_var_map") and token_value in self._token_var_map:
+            return f"${{{self._token_var_map[token_value]}}}"
+        return None
+
+    def _get_header_variable(self, key: str, value: str) -> str | None:
+        """Get variable reference for a header value.
+
+        Returns variable reference like ${X_CSRF_TOKEN_1} or None if not found.
+        """
+        if hasattr(self, "_header_var_map"):
+            var_name = self._header_var_map.get((key, value))
+            if var_name:
+                return f"${{{var_name}}}"
+        return None
+
+    def _get_form_variable(self, key: str, value: str) -> str | None:
+        """Get variable reference for a form field value.
+
+        Returns variable reference like ${CLIENT_ID_1} or None if not found.
+        """
+        if hasattr(self, "_form_var_map"):
+            var_name = self._form_var_map.get((key, value))
+            if var_name:
+                return f"${{{var_name}}}"
+        return None
 
     def _bruno_var_to_robot(self, name: str) -> str:
         """Convert Bruno variable name to Robot format.

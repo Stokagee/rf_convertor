@@ -28,6 +28,65 @@ class AuthType(str, Enum):
     CERT = "cert"
 
 
+class OAuth2Flow(str, Enum):
+    """OAuth2 grant types."""
+
+    CLIENT_CREDENTIALS = "client_credentials"
+    PASSWORD = "password"
+    AUTHORIZATION_CODE = "authorization_code"
+    IMPLICIT = "implicit"
+
+
+class OAuth2Credentials(BaseModel):
+    """OAuth2 client credentials."""
+
+    client_id: str | None = None
+    client_secret: str | None = None
+    placement: str = "body"  # "body" or "header" for credentials
+
+
+class OAuth2TokenConfig(BaseModel):
+    """OAuth2 token placement configuration."""
+
+    id: str = "credentials"
+    placement_header: str = "Bearer"  # "Bearer" prefix for Authorization header
+
+
+class OAuth2Settings(BaseModel):
+    """OAuth2 token management settings."""
+
+    auto_fetch_token: bool = True
+    auto_refresh_token: bool = True  # Always True per requirements
+
+
+class BrunoOAuth2Config(BaseModel):
+    """OAuth2 configuration from Bruno collection."""
+
+    flow: OAuth2Flow = OAuth2Flow.CLIENT_CREDENTIALS
+    authorization_url: str | None = None
+    access_token_url: str | None = None
+    refresh_token_url: str | None = None
+    callback_url: str | None = None
+    credentials: OAuth2Credentials = OAuth2Credentials()
+    scope: str | None = None
+    token_config: OAuth2TokenConfig = OAuth2TokenConfig()
+    settings: OAuth2Settings = OAuth2Settings()
+
+    # PKCE support
+    pkce_enabled: bool = False
+    code_verifier: str | None = None
+    code_challenge: str | None = None
+
+    # Client assertion (JWT Bearer)
+    client_assertion_type: str | None = None  # urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+    client_assertion: str | None = None
+    private_key_path: str | None = None
+
+    # Resource owner (password flow)
+    username: str | None = None
+    password: str | None = None
+
+
 class BodyType(str, Enum):
     JSON = "json"
     TEXT = "text"
@@ -51,6 +110,9 @@ class BrunoAuth(BaseModel):
     api_key_location: str | None = None  # "header" or "query"
     cert_path: str | None = None
     key_path: str | None = None
+    key_password: str | None = None  # Password for private key or PKCS12
+    ca_bundle_path: str | None = None  # Path to CA bundle for server verification
+    oauth2: BrunoOAuth2Config | None = None  # OAuth2 configuration
 
 
 class BrunoBody(BaseModel):
@@ -75,7 +137,7 @@ class BrunoHttp(BaseModel):
     method: HttpMethod = HttpMethod.GET
     url: str
     body: BrunoBody | None = None
-    auth: AuthType = AuthType.INHERIT
+    auth: BrunoAuth | None = None  # Auth config (can be None for inherit)
     headers: dict[str, str] = Field(default_factory=dict)
     params: dict[str, str] = Field(default_factory=dict)  # Query params
 

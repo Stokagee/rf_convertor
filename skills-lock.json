@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "documentation-update": {
+      "source": "geoffjay/claude-plugins",
+      "sourceType": "github",
+      "computedHash": "f5c583e46e0bd41bf26c672bda8ce9a7d0fcca4984803f313779b9663e9fc417"
+    }
+  }
+}

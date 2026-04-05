@@ -13,12 +13,17 @@ from bruno_to_robot.models.bruno import (
     BrunoCollection,
     BrunoFolder,
     BrunoHttp,
+    BrunoOAuth2Config,
     BrunoRequest,
     BrunoRuntime,
     BrunoScript,
     BrunoSettings,
     BrunoVariable,
     HttpMethod,
+    OAuth2Credentials,
+    OAuth2Flow,
+    OAuth2Settings,
+    OAuth2TokenConfig,
 )
 
 from .base import BaseParser
@@ -126,7 +131,7 @@ class YamlParser(BaseParser):
         url = http.get("url", "")
 
         body = self._parse_body(http.get("body", {}))
-        auth = self._parse_auth_type(http.get("auth", "inherit"))
+        auth = self._parse_auth(http.get("auth", "inherit"))  # Full auth config
         headers = self._parse_headers(http.get("headers", []))
         params = self._parse_params(http.get("params", []))
 
@@ -308,6 +313,11 @@ class YamlParser(BaseParser):
         if isinstance(auth_data, str):
             return BrunoAuth(type=AuthType(auth_data))
 
+        # Check if OAuth2 configuration is present
+        oauth2_config = None
+        if auth_data.get("type") == "oauth2":
+            oauth2_config = self._parse_oauth2_config(auth_data)
+
         return BrunoAuth(
             type=AuthType(auth_data.get("type", "none")),
             username=auth_data.get("username"),
@@ -319,6 +329,59 @@ class YamlParser(BaseParser):
             or auth_data.get("key_location"),
             cert_path=auth_data.get("cert") or auth_data.get("cert_path"),
             key_path=auth_data.get("key") or auth_data.get("key_path"),
+            key_password=auth_data.get("keyPassword") or auth_data.get("key_password"),
+            ca_bundle_path=auth_data.get("caBundle") or auth_data.get("ca_bundle_path"),
+            oauth2=oauth2_config,
+        )
+
+    def _parse_oauth2_config(self, auth_data: dict) -> BrunoOAuth2Config:
+        """Parse OAuth2 configuration from Bruno auth block."""
+        credentials_data = auth_data.get("credentials", {})
+        token_config_data = auth_data.get("tokenConfig", {})
+        settings_data = auth_data.get("settings", {})
+
+        # Determine OAuth2 flow
+        flow_str = auth_data.get("flow", "client_credentials")
+        try:
+            flow = OAuth2Flow(flow_str)
+        except ValueError:
+            flow = OAuth2Flow.CLIENT_CREDENTIALS
+
+        # Check for PKCE indicators
+        pkce_enabled = auth_data.get("pkceEnabled", False)
+        if not pkce_enabled and (auth_data.get("codeVerifier") or auth_data.get("code_verifier")):
+            pkce_enabled = True
+
+        return BrunoOAuth2Config(
+            flow=flow,
+            authorization_url=auth_data.get("authorizationUrl") or auth_data.get("authorization_url"),
+            access_token_url=auth_data.get("accessTokenUrl") or auth_data.get("access_token_url")
+            or auth_data.get("tokenUrl") or auth_data.get("token_url"),
+            refresh_token_url=auth_data.get("refreshTokenUrl") or auth_data.get("refresh_token_url"),
+            callback_url=auth_data.get("callbackUrl") or auth_data.get("callback_url")
+            or auth_data.get("redirectUri") or auth_data.get("redirect_uri"),
+            credentials=OAuth2Credentials(
+                client_id=credentials_data.get("clientId") or credentials_data.get("client_id"),
+                client_secret=credentials_data.get("clientSecret") or credentials_data.get("client_secret"),
+                placement=credentials_data.get("placement", "body"),
+            ),
+            scope=auth_data.get("scope"),
+            token_config=OAuth2TokenConfig(
+                id=token_config_data.get("id", "credentials"),
+                placement_header=token_config_data.get("placement", {}).get("header", "Bearer"),
+            ),
+            settings=OAuth2Settings(
+                auto_fetch_token=settings_data.get("autoFetchToken", True),
+                auto_refresh_token=True,  # Always True per requirements
+            ),
+            pkce_enabled=pkce_enabled,
+            code_verifier=auth_data.get("codeVerifier") or auth_data.get("code_verifier"),
+            code_challenge=auth_data.get("codeChallenge") or auth_data.get("code_challenge"),
+            client_assertion_type=auth_data.get("clientAssertionType") or auth_data.get("client_assertion_type"),
+            client_assertion=auth_data.get("clientAssertion") or auth_data.get("client_assertion"),
+            private_key_path=auth_data.get("privateKeyPath") or auth_data.get("private_key_path"),
+            username=auth_data.get("username"),
+            password=auth_data.get("password"),
         )
 
     def _parse_variables(
