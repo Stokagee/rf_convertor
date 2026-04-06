@@ -6,6 +6,9 @@
 {% for imp in suite.imports %}
 Library           {{ imp }}
 {% endfor %}
+{% if suite.helper_library %}
+Library           ${CURDIR}${/}{{ suite.helper_library }}.py
+{% endif %}
 {% if suite.settings.get("resource") %}
 Resource          {{ suite.settings["resource"] }}
 {% endif %}

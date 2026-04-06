@@ -7,7 +7,9 @@ import re
 from urllib.parse import urlparse
 
 from bruno_to_robot.models.bruno import (
+    AuthType,
     BodyType,
+    BrunoAssertion,
     BrunoBody,
     BrunoCollection,
     BrunoFolder,
@@ -16,6 +18,7 @@ from bruno_to_robot.models.bruno import (
     HttpMethod,
 )
 from bruno_to_robot.models.robot import RobotStep, RobotSuite, RobotTestCase, RobotVariable
+from bruno_to_robot.mapper.script_mapper import ScriptMapper, ScriptMappingResult
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +55,8 @@ class RequestMapper:
         }
         # Will be populated during mapping
         self.url_sessions: dict[str, str] = {}  # base_url -> session_alias
+        self._pre_request_helpers: list = []  # Collected PreRequestHelper objects
+        self._script_mapper = ScriptMapper()  # Reusable script mapper
 
     def map_collection(
         self,
@@ -165,6 +170,21 @@ class RequestMapper:
         parts = domain.split(".")
         return parts[0] if parts else "srv"
 
+    def _convert_bruno_vars_to_robot(self, text: str) -> str:
+        """Convert Bruno variable syntax {{var}} to Robot syntax ${VAR}.
+
+        Also converts to uppercase with underscores.
+        """
+        import re
+
+        def replace_var(match: re.Match) -> str:
+            var_name = match.group(1).strip()
+            # Convert to uppercase with underscores
+            robot_var = var_name.upper().replace("-", "_")
+            return f"${{{robot_var}}}"
+
+        return re.sub(r"\{\{([^}]+)\}\}", replace_var, text)
+
     def _get_session_for_url(self, url: str) -> tuple[str, str]:
         """Get session alias and relative path for a URL.
 
@@ -173,6 +193,21 @@ class RequestMapper:
         """
         if not url:
             return (self.session_name, "/")
+
+        # Convert Bruno variables {{var}} to Robot variables ${VAR}
+        url = self._convert_bruno_vars_to_robot(url)
+
+        # Handle Bruno variable prefix like {{base_url}}/path
+        if url.startswith("${"):
+            # This was a {{base_url}}/path pattern, now ${BASE_URL}/path
+            # We use the session instead, so strip the variable
+            # Find the end of the variable
+            end_idx = url.find("}")
+            if end_idx != -1:
+                remaining = url[end_idx + 1:]
+                if remaining and not remaining.startswith("/"):
+                    remaining = "/" + remaining
+                return (self.session_name, remaining or "/")
 
         # If URL is already relative
         if "://" not in url:
@@ -194,6 +229,8 @@ class RequestMapper:
 
     def _map_single_suite(self, collection: BrunoCollection) -> RobotSuite:
         """Map entire collection to single suite."""
+        # Reset helpers for new collection
+        self._pre_request_helpers = []
         variables = self._extract_variables(collection)
         test_cases = []
 
@@ -217,13 +254,27 @@ class RequestMapper:
             "suite_teardown": "Delete All Sessions",
         }
 
+        # Determine helper library name
+        helper_library = None
+        if self._pre_request_helpers:
+            helper_library = f"{self._sanitize_name(collection.name).lower().replace(' ', '_')}_helpers"
+
         return RobotSuite(
             name=self._sanitize_name(collection.name),
             variables=variables,
             test_cases=test_cases,
             keywords=keywords,
             settings=settings,
+            helper_library=helper_library,
         )
+
+    def get_helpers(self) -> list:
+        """Get all collected pre-request helpers.
+
+        Returns:
+            List of PreRequestHelper objects
+        """
+        return self._pre_request_helpers
 
     def _generate_session_keywords(self) -> dict[str, list[RobotStep]]:
         """Generate keywords for session management."""
@@ -353,19 +404,45 @@ class RequestMapper:
         steps = []
         http = request.http
 
+        # Process runtime scripts using ScriptMapper
+        script_result = self._script_mapper.map_scripts(request)
+
+        # Collect pre-request helper for later generation
+        if script_result.pre_request_helper:
+            self._pre_request_helpers.append(script_result.pre_request_helper)
+
+        # Add pre-request steps (body generation from before-request scripts)
+        if script_result.pre_request_helper:
+            helper = script_result.pre_request_helper
+            # Call Python helper to generate body
+            steps.append(RobotStep(
+                keyword=helper.function_name,
+                assign="${request_body}",
+            ))
+
         # Build request steps (may include Create Dictionary for headers)
-        request_steps = self._build_request_step(http, collection)
+        request_steps = self._build_request_step(http, collection, script_result)
         steps.extend(request_steps)
 
         # Build assertion steps
         assertion_steps = self._build_assertion_steps(request)
         steps.extend(assertion_steps)
 
+        # Add after-response steps (variable extraction)
+        for var in script_result.extracted_variables:
+            # Extract value from response JSON
+            steps.append(RobotStep(
+                keyword="Set Suite Variable",
+                args=[f"${{{var.name}}}", f"${{resp.json()['{var.json_path}']}}"],
+            ))
+
         # Extract tags
         tags = self._extract_tags(request, folder)
 
         # Use docs from Bruno request, or fall back to generic message
-        documentation = request.docs or f"Converted from Bruno request: {request.name}"
+        # Replace newlines with spaces for single-line documentation
+        docs = request.docs or f"Converted from Bruno request: {request.name}"
+        documentation = docs.replace("\n", " ").strip()
 
         return RobotTestCase(
             name=self._sanitize_name(request.name),
@@ -378,6 +455,7 @@ class RequestMapper:
         self,
         http: BrunoHttp,
         collection: BrunoCollection,
+        script_result: ScriptMappingResult | None = None,
     ) -> list[RobotStep]:
         """Build request step(s) including header setup if needed.
 
@@ -396,9 +474,12 @@ class RequestMapper:
         if collection.base_url and http.url.startswith(collection.base_url):
             url_path = self._extract_path(http.url, collection.base_url)
 
-        # Handle form-urlencoded body - create dictionary first
+        # Handle body - prefer generated body from pre-request script
         body_ref = None
-        if http.body and http.body.type == BodyType.FORM:
+        if script_result and script_result.pre_request_helper:
+            # Use body generated by Python helper
+            body_ref = "json=${request_body}"
+        elif http.body and http.body.type == BodyType.FORM:
             if isinstance(http.body.data, dict):
                 form_dict = {}
                 for key, value in sorted(http.body.data.items()):
@@ -422,9 +503,19 @@ class RequestMapper:
 
         # Handle custom headers - create dictionary
         headers_ref = "${DEFAULT_HEADERS}"
+        merged_headers = {**self.default_headers}
+
+        # Add Authorization header from http.auth if present
+        if http.auth and http.auth.type == AuthType.BEARER and http.auth.token:
+            token = http.auth.token
+            # Convert Bruno variable syntax to Robot variable syntax
+            if token.startswith("{{") and token.endswith("}}"):
+                var_name = token[2:-2].strip().upper().replace("-", "_")
+                token = f"${{{var_name}}}"
+            merged_headers["Authorization"] = f"Bearer {token}"
+
         if http.headers:
-            # Merge default headers with request-specific headers
-            merged_headers = {**self.default_headers}
+            # Merge request-specific headers
             for key, value in http.headers.items():
                 # Replace hardcoded Bearer tokens with variable references
                 if key.lower() == "authorization" and value.startswith("Bearer "):
@@ -445,6 +536,8 @@ class RequestMapper:
                 else:
                     merged_headers[key] = value
 
+        # Only create custom headers dictionary if we have additional headers beyond defaults
+        if merged_headers != self.default_headers:
             dict_args = [f"{k}={v}" for k, v in sorted(merged_headers.items())]
             steps.append(RobotStep(
                 keyword="Create Dictionary",
@@ -586,25 +679,107 @@ class RequestMapper:
         return url if url.startswith("/") else f"/{url}"
 
     def _build_assertion_steps(self, request: BrunoRequest) -> list[RobotStep]:
-        """Build assertion steps from Bruno test scripts."""
+        """Build assertion steps from Bruno test scripts and assertions."""
         steps = []
 
-        if not request.runtime or not request.runtime.scripts:
-            # Default: check status code is 2xx
+        # Handle structured assertions from runtime.assertions
+        if request.runtime and request.runtime.assertions:
+            for assertion in request.runtime.assertions:
+                step = self._convert_assertion(assertion)
+                if step:
+                    steps.append(step)
+
+        # Handle script-based assertions from runtime.scripts
+        if request.runtime and request.runtime.scripts:
+            for script in request.runtime.scripts:
+                if script.type == "tests":
+                    parsed = self._parse_chai_assertions(script.code)
+                    steps.extend(parsed)
+
+        # Default: check status code is 2xx if no assertions found
+        if not steps:
             steps.append(
                 RobotStep(
                     keyword="Should Be True",
                     args=["${resp.status_code} < 400", "Check for 2xx/3xx status"],
                 )
             )
-            return steps
-
-        for script in request.runtime.scripts:
-            if script.type == "tests":
-                parsed = self._parse_chai_assertions(script.code)
-                steps.extend(parsed)
 
         return steps
+
+    def _convert_assertion(self, assertion) -> RobotStep | None:
+        """Convert Bruno assertion to Robot Framework step.
+
+        Args:
+            assertion: BrunoAssertion object
+
+        Returns:
+            RobotStep or None if unsupported
+        """
+        expr = assertion.expression
+        op = assertion.operator
+        value = assertion.value
+
+        # Handle res.status assertions
+        if expr == "res.status":
+            if op == "eq":
+                return RobotStep(
+                    keyword="Should Be Equal As Integers",
+                    args=["${resp.status_code}", value],
+                )
+            elif op == "neq":
+                return RobotStep(
+                    keyword="Should Not Be Equal As Integers",
+                    args=["${resp.status_code}", value],
+                )
+
+        # Handle res.body.field assertions
+        if expr.startswith("res.body."):
+            field = expr[9:]  # Remove "res.body." prefix
+            json_ref = f"${{resp.json()['{field}']}}"
+
+            if op == "eq":
+                # Try to detect if value is numeric or string
+                try:
+                    int(value)
+                    return RobotStep(
+                        keyword="Should Be Equal As Integers",
+                        args=[json_ref, value],
+                    )
+                except ValueError:
+                    return RobotStep(
+                        keyword="Should Be Equal",
+                        args=[json_ref, f"'{value}'"],
+                    )
+            elif op == "neq":
+                return RobotStep(
+                    keyword="Should Not Be Equal",
+                    args=[json_ref, f"'{value}'"],
+                )
+            elif op in ("gt", "gte", "lt", "lte"):
+                keyword_map = {
+                    "gt": "Should Be True",
+                    "gte": "Should Be True",
+                    "lt": "Should Be True",
+                    "lte": "Should Be True",
+                }
+                op_map = {"gt": ">", "gte": ">=", "lt": "<", "lte": "<="}
+                return RobotStep(
+                    keyword=keyword_map[op],
+                    args=[f"{json_ref} {op_map[op]} {value}"],
+                )
+            elif op == "exists":
+                return RobotStep(
+                    keyword="Dictionary Should Contain Key",
+                    args=["${resp.json()}", f"'{field}'"],
+                )
+
+        # Unsupported assertion - add comment
+        return RobotStep(
+            keyword="Log",
+            args=[f"TODO: Unsupported assertion: {expr} {op} {value}"],
+            comment="Manual conversion required",
+        )
 
     def _parse_chai_assertions(self, code: str) -> list[RobotStep]:
         """Parse Chai-style assertions from Bruno script.

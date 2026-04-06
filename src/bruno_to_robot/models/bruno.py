@@ -126,9 +126,17 @@ class BrunoBody(BaseModel):
 class BrunoScript(BaseModel):
     """Pre/post request script."""
 
-    type: str  # "pre-request", "post-request", "tests"
+    type: str  # "pre-request", "post-request", "before-request", "after-response", "tests"
     code: str
     enabled: bool = True
+
+
+class BrunoAssertion(BaseModel):
+    """Runtime assertion from Bruno."""
+
+    expression: str  # e.g., "res.status"
+    operator: str  # e.g., "eq", "neq", "gt", "lt", "gte", "lte"
+    value: str  # Expected value as string
 
 
 class BrunoHttp(BaseModel):
@@ -160,6 +168,7 @@ class BrunoRuntime(BaseModel):
     """Runtime scripts configuration."""
 
     scripts: list[BrunoScript] = Field(default_factory=list)
+    assertions: list[BrunoAssertion] = Field(default_factory=list)
 
 
 class BrunoSettings(BaseModel):

@@ -112,3 +112,26 @@ class RobotGenerator:
         """
         suite = RobotSuite(name=name)
         self.generate_suite(suite, output_path)
+
+    def generate_helper_library(
+        self,
+        helpers: list,
+        output_path: str | Path,
+    ) -> None:
+        """Generate a Python helper library file.
+
+        Args:
+            helpers: List of PreRequestHelper objects
+            output_path: Path to output .py file
+        """
+        if not helpers:
+            return
+
+        template = self.env.get_template("helpers.py.jinja")
+
+        content = template.render(helpers=helpers)
+
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(content, encoding="utf-8")
+        logger.info(f"Generated helper library {output_path}")

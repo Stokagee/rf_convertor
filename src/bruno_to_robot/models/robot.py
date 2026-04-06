@@ -104,6 +104,8 @@ class RobotSuite(BaseModel):
     keywords: dict[str, list[RobotStep]] = Field(default_factory=dict)
     settings: dict[str, str] = Field(default_factory=dict)
     imports: list[str] = Field(default_factory=lambda: ["RequestsLibrary"])
+    helper_library: str | None = None  # Python helper library name (without .py)
+    helper_functions: list[str] = Field(default_factory=list)  # Function names to import
 
     def get_sorted_test_cases(self) -> list[RobotTestCase]:
         """Return test cases sorted by name for idempotency."""

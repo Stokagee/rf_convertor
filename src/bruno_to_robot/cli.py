@@ -168,6 +168,10 @@ def main(
         if output_path.suffix != ".robot":
             output_path.mkdir(parents=True, exist_ok=True)
 
+        # Track the output directory and base name for helper files
+        output_dir = None
+        output_base_name = None
+
         # Generate files
         for suite in suites:
             if output_path.is_dir() or split or len(suites) > 1:
@@ -175,8 +179,23 @@ def main(
             else:
                 out_file = output_path
 
+            # Get base name from the output file (without .robot extension)
+            output_base_name = out_file.stem
+
+            # Update suite's helper_library to match output file name
+            if suite.helper_library:
+                suite.helper_library = f"{output_base_name}_helpers"
+
             generator.generate_suite(suite, out_file)
             click.echo(f"Generated: {out_file}")
+            output_dir = out_file.parent
+
+        # Generate helper library if needed (for all suites)
+        helpers = mapper.get_helpers() if hasattr(mapper, "get_helpers") else []
+        if helpers and output_dir and output_base_name:
+            helper_file = output_dir / f"{output_base_name}_helpers.py"
+            generator.generate_helper_library(helpers, helper_file)
+            click.echo(f"Generated helper: {helper_file}")
 
         # Generate resource file if requested
         if resource_path:

@@ -8,6 +8,7 @@ import yaml
 
 from bruno_to_robot.models.bruno import (
     AuthType,
+    BrunoAssertion,
     BrunoAuth,
     BrunoBody,
     BrunoCollection,
@@ -277,10 +278,11 @@ class YamlParser(BaseParser):
         return result
 
     def _parse_runtime(self, runtime_data: dict) -> BrunoRuntime | None:
-        """Parse runtime scripts."""
+        """Parse runtime scripts and assertions."""
         scripts_data = runtime_data.get("scripts", [])
+        assertions_data = runtime_data.get("assertions", [])
 
-        if not scripts_data:
+        if not scripts_data and not assertions_data:
             return None
 
         scripts = []
@@ -293,7 +295,17 @@ class YamlParser(BaseParser):
                 )
             )
 
-        return BrunoRuntime(scripts=scripts)
+        assertions = []
+        for assertion in assertions_data:
+            assertions.append(
+                BrunoAssertion(
+                    expression=assertion.get("expression", ""),
+                    operator=assertion.get("operator", "eq"),
+                    value=assertion.get("value", ""),
+                )
+            )
+
+        return BrunoRuntime(scripts=scripts, assertions=assertions)
 
     def _parse_settings(self, settings_data: dict) -> BrunoSettings | None:
         """Parse request settings."""
