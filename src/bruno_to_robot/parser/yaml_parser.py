@@ -41,6 +41,9 @@ class ParseError(Exception):
 class YamlParser(BaseParser):
     """Parser for OpenCollection YAML format."""
 
+    def __init__(self, environment_name: str | None = None) -> None:
+        self.environment_name = environment_name
+
     def parse(self, content: str) -> BrunoCollection:
         """Parse YAML content into BrunoCollection.
 
@@ -73,9 +76,11 @@ class YamlParser(BaseParser):
         base_url = self._extract_base_url(data)
 
         folders = self._parse_folders(data.get("folders", []))
-        # Support both 'requests' and 'items' keys
-        requests_data = data.get("requests", data.get("items", []))
-        requests = self._parse_requests(requests_data)
+        requests = self._parse_requests(data.get("requests", []))
+
+        item_folders, item_requests = self._parse_items(data.get("items", []))
+        folders.extend(item_folders)
+        requests.extend(item_requests)
 
         return BrunoCollection(
             name=name,
@@ -89,16 +94,33 @@ class YamlParser(BaseParser):
 
     def _extract_variables(self, data: dict) -> list[BrunoVariable]:
         """Extract variables from various locations in Bruno collection."""
-        # Try config.environments[0].variables first
-        config = data.get("config", {})
-        environments = config.get("environments", [])
-        if environments:
-            env_vars = environments[0].get("variables", [])
+        selected_environment = self._get_selected_environment(data)
+        if selected_environment:
+            env_vars = selected_environment.get("variables", [])
             if env_vars:
                 return self._parse_variables(env_vars)
 
         # Fall back to top-level variables
         return self._parse_variables(data.get("variables", {}))
+
+    def _get_selected_environment(self, data: dict) -> dict | None:
+        """Return the selected Bruno environment, if any."""
+        config = data.get("config", {})
+        environments = config.get("environments", [])
+
+        if not environments:
+            if self.environment_name:
+                raise ParseError(f"Environment '{self.environment_name}' not found")
+            return None
+
+        if self.environment_name is None:
+            return environments[0]
+
+        for environment in environments:
+            if environment.get("name") == self.environment_name:
+                return environment
+
+        raise ParseError(f"Environment '{self.environment_name}' not found")
 
     def _extract_base_url(self, data: dict) -> str | None:
         """Extract base URL from collection."""
@@ -187,6 +209,8 @@ class YamlParser(BaseParser):
             headers = {}
             for item in headers_data:
                 if isinstance(item, dict):
+                    if item.get("disabled", False):
+                        continue
                     name = item.get("name", "")
                     value = item.get("value", "")
                     if name:
@@ -215,6 +239,8 @@ class YamlParser(BaseParser):
             params = {}
             for item in params_data:
                 if isinstance(item, dict):
+                    if item.get("disabled", False):
+                        continue
                     name = item.get("name", "")
                     value = item.get("value", "")
                     if name:
@@ -257,6 +283,7 @@ class YamlParser(BaseParser):
         type_mapping = {
             "form-urlencoded": "form",
             "urlencoded": "form",
+            "multipart-form": "multipart",
             "json": "json",
             "text": "text",
             "xml": "xml",
@@ -408,6 +435,8 @@ class YamlParser(BaseParser):
         if isinstance(vars_data, dict):
             for name, value in vars_data.items():
                 if isinstance(value, dict):
+                    if not value.get("enabled", True):
+                        continue
                     variables.append(
                         BrunoVariable(
                             name=name,
@@ -420,6 +449,8 @@ class YamlParser(BaseParser):
                     variables.append(BrunoVariable(name=name, value=value))
         else:
             for var in vars_data:
+                if not var.get("enabled", True):
+                    continue
                 variables.append(
                     BrunoVariable(
                         name=var.get("name"),
@@ -447,6 +478,40 @@ class YamlParser(BaseParser):
             )
 
         return folders
+
+    def _parse_items(self, items_data: list) -> tuple[list[BrunoFolder], list[BrunoRequest]]:
+        """Parse Bruno `items` arrays that can contain folders and requests."""
+        folders = []
+        requests = []
+
+        for item in items_data:
+            info = item.get("info", {})
+            item_type = info.get("type", item.get("type", "http"))
+
+            if item_type == "folder":
+                folders.append(self._parse_folder_item(item))
+            else:
+                requests.append(self._parse_request_item(item))
+
+        return folders, requests
+
+    def _parse_folder_item(self, data: dict) -> BrunoFolder:
+        """Parse a folder entry from Bruno `items` format."""
+        info = data.get("info", {})
+        nested_folders = self._parse_folders(data.get("folders", []))
+        nested_requests = self._parse_requests(data.get("requests", []))
+
+        item_folders, item_requests = self._parse_items(data.get("items", []))
+        nested_folders.extend(item_folders)
+        nested_requests.extend(item_requests)
+
+        return BrunoFolder(
+            name=info.get("name", data.get("name", "Unnamed Folder")),
+            path=data.get("path", ""),
+            requests=nested_requests,
+            folders=nested_folders,
+            variables=self._parse_variables(data.get("variables", {})),
+        )
 
     def _parse_requests(self, requests_data: list) -> list[BrunoRequest]:
         """Parse list of requests."""

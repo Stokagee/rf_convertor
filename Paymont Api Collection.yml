@@ -1,0 +1,3817 @@
+opencollection: 1.0.0
+info:
+  name: Paymont Api Collection
+config:
+  clientCertificates: []
+  environments:
+    - name: devel
+      variables:
+        - name: baseUrl
+          value: https://bpapi-dev.internal.xx
+        - name: jwtToken
+          value: ''
+        - name: tokenExpiry
+          value: '0'
+        - name: username
+          value: basepoint_tester
+        - name: personUuid
+          value: fc018f2c-e0cf-4124-bb08-41c2dde64f93
+        - name: actorUuid
+          value: ''
+        - name: customerUuid
+          value: eead420f-eaa2-41ae-a60f-da6fdffc6bf6
+        - name: customerActorUuid
+          value: ''
+        - name: whitelistAccountUuid
+          value: ''
+        - name: customerWhitelistAccountUuid
+          value: ''
+        - name: paymentAccountUuid
+          value: ''
+        - name: walletUuid
+          value: 762a809b-b192-4ff5-95a1-3d6f362cc017
+        - name: clientWalletUuid
+          value: ''
+        - name: transactionUuid
+          value: ''
+        - name: holdUuid
+          value: ''
+        - name: clientUuid
+          value: 9a7fb37e-45cc-4dbe-aad4-de2c1e729ef1
+        - name: password
+          value: 56ozYRAqGfPkBsdtxEjX1YgxlR9g6Q
+    - name: hub
+      variables:
+        - name: baseUrl
+          value: http://localhost:8081
+    - name: local
+      variables:
+        - name: baseUrl
+          value: http://localhost:30300
+        - name: jwtToken
+          value: ''
+        - name: tokenExpiry
+          value: '0'
+        - name: username
+          value: s_admin
+        - name: password
+          value: suprAdmin69
+        - name: clientUuid
+          value: 6ee38421-43e8-49e9-936d-e13757c1305b
+        - name: personUuid
+          value: ''
+        - name: actorUuid
+          value: ''
+        - name: customerUuid
+          value: ''
+        - name: customerActorUuid
+          value: ''
+        - name: whitelistAccountUuid
+          value: ''
+        - name: customerWhitelistAccountUuid
+          value: ''
+        - name: paymentAccountUuid
+          value: ''
+        - name: walletUuid
+          value: ''
+        - name: clientWalletUuid
+          value: ''
+        - name: transactionUuid
+          value: ''
+        - name: holdUuid
+          value: ''
+        - name: documentUuid
+          value: ''
+    - name: nonprod
+      variables:
+        - name: baseUrl
+          value: https://bpapi-test.internal.xx
+        - name: jwtToken
+          value: ''
+        - name: tokenExpiry
+          value: '0'
+        - name: username
+          value: basepoint_tester
+        - name: password
+          value: nlEZuUrEO1MQ72V5sA2yvRo9V4R8KB
+        - name: clientUuid
+          value: 9a7fb37e-45cc-4dbe-aad4-de2c1e729ef1
+        - name: customerUuid
+          value: 33e135f4-868b-462c-99f1-e6c4bc96c098
+        - name: walletUuid
+          value: 0acc8392-d42e-49bc-a74d-7baecc112a27
+        - name: recipientUuid
+          value: fcd0ff01-5408-4486-a88e-e4b3decaf9c4
+        - name: paymentAccountUuid
+          value: f60c09d8-17df-4fd6-b703-27ee9e325c47
+        - name: personUuid
+          value: ''
+        - name: actorUuid
+          value: ''
+        - name: customerActorUuid
+          value: ''
+        - name: holdUuid
+          value: ''
+        - name: transactionUuid
+          value: ''
+    - name: test
+      variables:
+        - name: baseUrl
+          value: https://api-dev.internal.xx
+        - name: clientId
+          value: 655dbbb4-8ab9-4341-918d-cf88d16aaa32
+        - name: clientSecret
+          value: QAPQjeh3_L0jEYZvwmnfYPG5If
+        - name: accessToken
+          value: ''
+        - name: clientUuid
+          value: 655dbbb4-8ab9-4341-918d-cf88d16aaa32
+        - name: customerUuid
+          value: 1acf7a0b-b0be-4c69-a8cc-fdd081e182f5
+        - name: walletUuid
+          value: 1158716f-459b-461e-84fe-b0edc6264a99
+        - name: recipientUuid
+          value: 1c4606d3-1074-4447-93c7-f57bc9201097
+        - name: paymentAccountUuid
+          value: 6b70bb2e-3665-4d54-aa3c-b7de72d609ba
+        - name: personUuid
+          value: ''
+        - name: actorUuid
+          value: ''
+        - name: holdUuid
+          value: ''
+        - name: transactionUuid
+          value: ''
+    - name: test_client
+      variables:
+        - name: baseUrl
+          value: https://api-dev.internal.xx
+        - name: baseUrlInternal
+          value: https://bpapi-dev.internal.xx
+        - name: jwtToken
+          value: ''
+        - name: tokenExpiry
+          value: '0'
+        - name: accessToken
+          value: ory_at_bZynxFxsqFYQbVcNhto5bPsXSAOoaEhJbx4-H0GHw58.0votvYrpuEsMKLpIimz-G3MIeMpZ861AD4rT1MrB9eA
+        - name: accessTokenExpiry
+          value: '0'
+        - name: username
+          value: basepoint_tester
+        - name: password
+          value: 56ozYRAqGfPkBsdtxEjX1YgxlR9g6Q
+        - name: clientId
+          value: 655dbbb4-8ab9-4341-918d-cf88d16aaa32
+        - name: clientSecret
+          value: QAPQjeh3_L0jEYZvwmnfYPG5If
+        - name: clientCert
+          value: MIIBrTCCAVMCEQCYCWWX2KlEyZRyD8KyAeJwMAoGCCqGSM49BAMCMEoxCzAJBgNVBAYTAkxUMRQwEgYDVQQKDAtQQVlNT05UIFVBQjELMAkGA1UECwwCSVQxGDAWBgNVBAMMD1BBWU1PTlQgVEVTVCBDQTAeFw0yNjA0MDEwNzU1NThaFw0zNjAyMDgwNzU1NThaMGsxCzAJBgNVBAYTAkxUMRQwEgYDVQQKDAtQQVlNT05UIFVBQjELMAkGA1UECwwCSVQxOTA3BgNVBAMMMFBheW1vbnQtQVBJLTY1NWRiYmI0LThhYjktNDM0MS05MThkLWNmODhkMTZhYWEzMjBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJwEt6A71iQLfUOHaEGZxRnW2gVb/Ok3VHQVvGOUBIzTiQ6snanKBLMdjm3sFS929xMMYeHNCGXa3dyClqV/ORYwCgYIKoZIzj0EAwIDSAAwRQIhALOj1iIrpehIlrXkNnVggaTTGdSqbG9mAxXXFDir5a4UAiAmPZpC4AnXlct7GabYbZLD9OOjsTONYeXaQJUkL/A6Gw==
+        - name: clientUuid
+          value: 655dbbb4-8ab9-4341-918d-cf88d16aaa32
+        - name: customerUuid
+          value: 8fb56a3c-ffbb-40f1-ba70-afa56a78862c
+        - name: walletUuid
+          value: 1158716f-459b-461e-84fe-b0edc6264a99
+        - name: recipientUuid
+          value: d7e5df24-c9ec-4d85-b3b3-8805707c489f
+        - name: paymentAccountUuid
+          value: 6b70bb2e-3665-4d54-aa3c-b7de72d609ba
+        - name: personUuid
+          value: 1f324521-7424-4273-8acf-c92ae50b0719
+        - name: actorUuid
+          value: ''
+        - name: customerActorUuid
+          value: ''
+        - name: holdUuid
+          value: ''
+        - name: transactionUuid
+          value: ''
+items:
+  - info:
+      name: Flows
+      type: folder
+      seq: 5
+    items:
+      - info:
+          name: Client API Flow
+          type: folder
+          seq: 2
+        request:
+          auth: inherit
+        items:
+          - info:
+              name: 03b. Set Customer Active
+              type: http
+              seq: 5
+            http:
+              method: PATCH
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/status'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "status": "ACTIVE"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      console.log("Customer ACTIVE");
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Status is ACTIVE", function() {
+                      expect(res.getBody().statusName).to.equal("ACTIVE");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 01. Create Customer
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "type": "NATURAL",
+                    "relationship": "INVEST",
+                    "riskLevel": "LOW",
+                    "customerIdInPlatform": "EXT-CUST-{{runId}}",
+                    "naturalPerson": {
+                      "firstName": "Jan",
+                      "lastName": "Novak",
+                      "birthDate": "1990-05-15",
+                      "countryOfBirth": "CZ",
+                      "citizenship": "CZ",
+                      "gender": "MALE",
+                      "taxResidences": [
+                        {"countryCode": "CZ"}
+                      ]
+                    },
+                    "registrationContact": {
+                      "registrationEmail": "jan-{{runId}}@test.cz",
+                      "registrationPhone": "+420777111222"
+                    },
+                    "personContact": {
+                      "emailContact": "jan-{{runId}}@personal.cz",
+                      "phoneContact": "+420777333444"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "Karlova 5",
+                        "city": "Praha",
+                        "zipCode": "11000",
+                        "countryCode": "CZ"
+                      }
+                    ]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    // Always generate fresh runId for unique data
+                    bru.setVar("runId", Date.now().toString().slice(-6));
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      bru.setVar("customerUuid", body.customerUuid);
+                      bru.setVar("customerPersonUuid", body.personUuid);
+                      console.log("Customer created:", body.customerUuid);
+                      console.log("Status:", body.statusName);
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 201 Created", function() {
+                      expect(res.status).to.equal(201);
+                    });
+
+                    test("Has customerUuid", function() {
+                      expect(res.getBody().customerUuid).to.be.a("string");
+                    });
+
+                    test("Status is INITIAL", function() {
+                      expect(res.getBody().statusName).to.equal("INITIAL");
+                    });
+
+                    test("Type is NATURAL", function() {
+                      expect(res.getBody().type).to.equal("NATURAL");
+                    });
+
+                    test("clientUuid resolved from cert", function() {
+                      expect(res.getBody().clientUuid).to.equal(bru.getEnvVar("clientUuid"));
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 00. Internal Login
+              type: http
+            http:
+              method: POST
+              url: '{{baseUrlInternal}}/api/auth/login?username={{username}}&password={{password}}'
+              params:
+                - name: username
+                  value: '{{username}}'
+                  type: query
+                - name: password
+                  value: '{{password}}'
+                  type: query
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status !== 200) {
+                      console.log("LOGIN FAILED!", JSON.stringify(res.getBody()));
+                    }
+
+                    const setCookieHeader = res.headers['set-cookie'];
+                    if (setCookieHeader) {
+                      const cookies = Array.isArray(setCookieHeader) ? setCookieHeader.join('; ') : setCookieHeader;
+                      const jwtMatch = cookies.match(/paymont-jwt-token=([^;]+)/);
+                      if (jwtMatch) {
+                        bru.setVar("jwtToken", jwtMatch[1]);
+                        console.log("Internal login OK");
+                      }
+                    }
+                - type: tests
+                  code: |-
+                    test("Login successful", function() {
+                      expect(res.status).to.equal(200);
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 03. Activate Customer
+              type: http
+              seq: 4
+            http:
+              method: PATCH
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/status'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "status": "PENDING_SETUP"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("customerUuid")) {
+                      throw new Error("customerUuid not set");
+                    }
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      console.log("Customer -> PENDING_SETUP");
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Status is PENDING_SETUP", function() {
+                      expect(res.getBody().statusName).to.equal("PENDING_SETUP");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 02. Get Customer
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("customerUuid")) {
+                      throw new Error("customerUuid not set - run Create Customer first");
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("customerUuid matches", function() {
+                      expect(res.getBody().customerUuid).to.equal(bru.getVar("customerUuid"));
+                    });
+
+                    test("Status is INITIAL", function() {
+                      expect(res.getBody().statusName).to.equal("INITIAL");
+                    });
+
+                    test("Has naturalPerson data", function() {
+                      expect(res.getBody().naturalPerson).to.not.be.null;
+                    });
+
+                    test("Has address", function() {
+                      expect(res.getBody().addresses).to.be.an("array").and.have.length.greaterThan(0);
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 00b. Get OAuth2 Token
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/oauth2/token'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "grantType": "client_credentials",
+                    "scope": "read write"
+                  }
+              auth:
+                type: basic
+                username: '{{clientId}}'
+                password: '{{clientSecret}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      const body = res.getBody();
+                      bru.setVar("accessToken", body.accessToken);
+                      console.log("OAuth2 token OK, expires in:", body.expiresIn, "s");
+                    } else {
+                      console.log("OAUTH2 FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Has accessToken", function() {
+                      expect(res.getBody().accessToken).to.be.a("string");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 03c. Create Customer Wallet
+              type: http
+              seq: 6
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/wallet'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "currencyCode": "EUR",
+                    "nickname": "Main EUR Wallet",
+                    "walletType": "LIMITED"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      bru.setVar("walletUuid", body.walletUuid);
+                      console.log("Wallet created:", body.walletUuid, "|", body.currency, "|", body.status, "|", body.type);
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 201 Created", function() {
+                      expect(res.status).to.equal(201);
+                    });
+
+                    test("Has walletUuid", function() {
+                      expect(res.getBody().walletUuid).to.be.a("string");
+                    });
+
+                    test("Type is LIMITED", function() {
+                      expect(res.getBody().type).to.equal("LIMITED");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 04. Get Customer Wallets
+              type: http
+              seq: 8
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/wallets?page=0&size=20'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("customerUuid")) {
+                      throw new Error("customerUuid not set");
+                    }
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      const body = res.getBody();
+                      const wallets = (body.content && Array.isArray(body.content)) ? body.content : [];
+                      console.log("Wallets found:", wallets.length);
+                      for (let i = 0; i < wallets.length; i++) {
+                        const w = wallets[i];
+                        console.log("  " + w.currency + " | " + w.walletUuid + " | " + w.status + " | " + w.type);
+                      }
+                      if (wallets.length > 0) {
+                        bru.setVar("walletUuid", wallets[0].walletUuid);
+                        console.log("Saved walletUuid:", wallets[0].walletUuid);
+                      }
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Has auto-created wallet (LIMITED)", function() {
+                      const wallets = res.getBody().content;
+                      expect(wallets).to.be.an("array");
+                      expect(wallets.length).to.be.greaterThan(0);
+                    });
+
+                    test("Wallet is ACTIVE and LIMITED", function() {
+                      const w = res.getBody().content[0];
+                      expect(w.status).to.equal("ACTIVE");
+                      expect(w.type).to.equal("LIMITED");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 03d. Activate Wallet
+              type: http
+              seq: 7
+            http:
+              method: PATCH
+              url: '{{baseUrlInternal}}/api/person/wallet/{{walletUuid}}/status/ACTIVE'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("walletUuid")) {
+                      throw new Error("walletUuid not set");
+                    }
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      console.log("Wallet ACTIVE:", bru.getVar("walletUuid"));
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Wallet is ACTIVE", function() {
+                      expect(res.getBody().status).to.equal("ACTIVE");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 08. Charge Wallet (DEBUG)
+              type: http
+              seq: 12
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/wallet/charge/debug'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "walletUuid": "{{walletUuid}}",
+                    "amount": 100000,
+                    "scale": 2
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("walletUuid")) {
+                      throw new Error("walletUuid not set");
+                    }
+                - type: after-response
+                  code: console.log("Charge response:", res.status, JSON.stringify(res.getBody()));
+                - type: tests
+                  code: |-
+                    test("Charge successful", function() {
+                      expect(res.status).to.be.oneOf([200, 201]);
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 06. Create Payment Account
+              type: http
+              seq: 10
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-account'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "iban": "DE89370400440532013000",
+                    "bic": "COBADEFFXXX",
+                    "bankName": "Commerzbank AG",
+                    "accountHolderName": "{{recipientFullName}}",
+                    "countryCode": "DE",
+                    "currencyCode": "EUR",
+                    "recipientUuid": "{{recipientUuid}}"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("customerUuid")) {
+                      throw new Error("customerUuid not set");
+                    }
+                    if (!bru.getVar("recipientUuid")) {
+                      throw new Error("recipientUuid not set - run Get Recipients first");
+                    }
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      bru.setVar("paymentAccountUuid", body.paymentAccountUuid);
+                      console.log("Payment account created:", body.paymentAccountUuid);
+                      console.log("Status:", body.status, "| isWhitelisted:", body.isWhitelisted);
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 201 Created", function() {
+                      expect(res.status).to.equal(201);
+                    });
+
+                    test("Has paymentAccountUuid", function() {
+                      expect(res.getBody().paymentAccountUuid).to.be.a("string");
+                    });
+
+                    test("Status is WHITELIST (LIMITED wallet)", function() {
+                      expect(res.getBody().status).to.equal("WHITELIST");
+                    });
+
+                    test("isWhitelisted is true", function() {
+                      expect(res.getBody().isWhitelisted).to.equal(true);
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 07. Get Wallet Balance
+              type: http
+              seq: 11
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/balance'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("walletUuid")) {
+                      throw new Error("walletUuid not set - run Get Customer Wallets first");
+                    }
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      const b = res.getBody();
+                      console.log("Total:", b.totalBalance, "| Available:", b.availableBalance, "| Hold:", b.holdBalance);
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Balance fields present", function() {
+                      const b = res.getBody();
+                      expect(b.totalBalance).to.be.a("number");
+                      expect(b.availableBalance).to.be.a("number");
+                      expect(b.holdBalance).to.be.a("number");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 05. Get Recipients
+              type: http
+              seq: 9
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/recipients?page=0&size=20'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      const recipients = res.getBody().content || [];
+                      console.log("Recipients found:", recipients.length);
+                      for (let i = 0; i < recipients.length; i++) {
+                        const r = recipients[i];
+                        console.log("  " + r.fullName + " | " + r.recipientUuid + " | autoCreated:" + r.isAutoCreated);
+                      }
+                      if (recipients.length > 0) {
+                        bru.setVar("recipientUuid", recipients[0].recipientUuid);
+                        bru.setVar("recipientFullName", recipients[0].fullName);
+                        console.log("Saved recipientFullName:", recipients[0].fullName);
+                      }
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 200 OK", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Has auto-created recipient (LIMITED wallet)", function() {
+                      const recipients = res.getBody().content;
+                      expect(recipients).to.be.an("array");
+                      expect(recipients.length).to.be.greaterThan(0);
+                    });
+
+                    test("Recipient is auto-created", function() {
+                      expect(res.getBody().content[0].isAutoCreated).to.equal(true);
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 10. Create Payout
+              type: http
+              seq: 14
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/wallet/bank-account/{{paymentAccountUuid}}/payout'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "idempotencyKey": "PAYOUT-{{runId}}-{{$timestamp}}",
+                    "debitWalletUuid": "{{walletUuid}}",
+                    "amount": 5000,
+                    "scale": 2,
+                    "paymentType": "SEPA",
+                    "reference": "Test payout {{runId}}"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("walletUuid")) {
+                      throw new Error("walletUuid not set");
+                    }
+                    if (!bru.getVar("paymentAccountUuid")) {
+                      throw new Error("paymentAccountUuid not set");
+                    }
+                    if (!bru.getVar("runId")) {
+                      bru.setVar("runId", Date.now().toString().slice(-6));
+                    }
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      bru.setVar("payoutUuid", body.paymentUuid);
+                      console.log("Payout created:", body.paymentUuid, "| status:", body.status);
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 201 Created", function() {
+                      expect(res.status).to.equal(201);
+                    });
+
+                    test("Has paymentUuid", function() {
+                      expect(res.getBody().paymentUuid).to.be.a("string");
+                    });
+
+                    test("Payment type is SEPA", function() {
+                      expect(res.getBody().paymentType).to.equal("SEPA");
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: 09. Create Hold
+              type: http
+              seq: 13
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/hold'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "walletUuid": "{{walletUuid}}",
+                    "amount": 15000,
+                    "scale": 2,
+                    "reference": "order-{{runId}}"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    if (!bru.getVar("walletUuid")) {
+                      throw new Error("walletUuid not set");
+                    }
+                    if (!bru.getVar("runId")) {
+                      bru.setVar("runId", Date.now().toString().slice(-6));
+                    }
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      bru.setVar("holdUuid", body.holdUuid);
+                      console.log("Hold created:", body.holdUuid, "| amount:", body.amountDecimal, body.currency);
+                    } else {
+                      console.log("FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Status 201 Created", function() {
+                      expect(res.status).to.equal(201);
+                    });
+
+                    test("Has holdUuid", function() {
+                      expect(res.getBody().holdUuid).to.be.a("string");
+                    });
+
+                    test("Status is ACTIVE", function() {
+                      expect(res.getBody().status).to.equal("ACTIVE");
+                    });
+
+                    test("Amount is 150.00", function() {
+                      expect(res.getBody().originalAmount).to.equal(15000);
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+  - info:
+      name: External
+      type: folder
+      seq: 2
+    request:
+      headers:
+        - name: X-SSL-Client-Cert
+          value: '{{clientCert}}'
+      auth: inherit
+      scripts:
+        - type: before-request
+          code: |-
+            // --- Set Cookie header with JWT token ---
+            const token = bru.getVar("jwtToken") || bru.getEnvVar("jwtToken");
+            if (token) {
+              req.setHeader("Cookie", `paymont-jwt-token=${token}`);
+            }
+    items:
+      - info:
+          name: Auth
+          type: folder
+          seq: 1
+        items:
+          - info:
+              name: Get Token
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/oauth2/token'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "grantType": "client_credentials",
+                    "scope": "read write"
+                  }
+              auth:
+                type: basic
+                username: '{{clientId}}'
+                password: '{{clientSecret}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 200) {
+                      const body = res.getBody();
+                      if (body.accessToken) {
+                        bru.setEnvVar("accessToken", body.accessToken);
+                        const expiresIn = body.expiresIn || 3600;
+                        console.log("Access token saved to env. Expires in:", expiresIn, "seconds");
+                      }
+                    } else {
+                      console.log("GET TOKEN FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+                - type: tests
+                  code: |-
+                    test("Token obtained successfully", function() {
+                      expect(res.status).to.equal(200);
+                    });
+
+                    test("Access token present", function() {
+                      const body = res.getBody();
+                      expect(body.accessToken).to.be.a('string');
+                    });
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # OAuth2 - Get Token
+
+              Obtain an OAuth2 access token using Client Credentials grant.
+
+              ## Requirements
+              - Valid client certificate (mTLS) — configured in bruno.json
+              - HTTP Basic Auth with client credentials (clientId + clientSecret from env)
+              - X-SSL-Client-Cert header (clientCert from env)
+
+              ## Response
+              - accessToken - JWT access token
+              - tokenType - "Bearer"
+              - expiresIn - Token lifetime in seconds (default 3600)
+              - scope - Granted scopes
+
+              ## Token auto-refresh
+              The collection pre-request script auto-refreshes the token for /api/v1/ requests
+              when it is missing or expired. This test can also be run manually to force a refresh.
+      - info:
+          name: Client Actors
+          type: folder
+          seq: 5
+        items:
+          - info:
+              name: Create Actor - Legal
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/actor'
+              body:
+                type: json
+                data: |-
+                  {
+                    "personType": "LEGAL",
+                    "relationType": "SHAREHOLDER",
+                    "position": null,
+                    "ownershipPercentage": 51.0,
+                    "startDate": "2024-01-01",
+                    "legalEntity": {
+                      "legalName": "Parent Company LLC",
+                      "businessIdentificationNumber": "98765432",
+                      "legalForm": "LLC",
+                      "dateOfIncorporation": "2010-01-01",
+                      "countryOfIncorporation": "US"
+                    }
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.actorUuid) {
+                        bru.setVar("actorUuid", body.actorUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Actor - Legal Entity (Client)
+
+              Creates and links a legal entity (shareholder company) to a client.
+          - info:
+              name: Get Actor
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/actor/{{actorUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Actor by UUID (Client)
+
+              Retrieves detailed information about a specific actor related to a client.
+          - info:
+              name: Create Actor - Natural
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/actor'
+              body:
+                type: json
+                data: |-
+                  {
+                    "personType": "NATURAL",
+                    "relationType": "DIRECTOR",
+                    "position": "CEO",
+                    "ownershipPercentage": 25.5,
+                    "startDate": "2024-01-01",
+                    "endDate": null,
+                    "ownershipDetail": "Full voting rights",
+                    "naturalPerson": {
+                      "firstName": "John",
+                      "lastName": "Doe",
+                      "birthDate": "1985-05-15",
+                      "personalIdentificationNumber": "8505151234",
+                      "countryOfBirth": "CZ",
+                      "citizenship": "CZ",
+                      "gender": "MALE",
+                      "taxResidences": [
+                        {
+                          "countryCode": "CZ"
+                        }
+                      ]
+                    },
+                    "contact": {
+                      "emailContact": "john.doe@email.com",
+                      "phoneContact": "+420123456789"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "Main Street 123",
+                        "city": "Prague",
+                        "zipCode": "11000",
+                        "countryCode": "CZ"
+                      }
+                    ],
+                    "naceCodes": ["62.01", "62.02"]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.actorUuid) {
+                        bru.setVar("actorUuid", body.actorUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Actor - Natural Person (Client)
+
+              Creates and links a natural person (director, beneficiary, etc.) to a client.
+          - info:
+              name: Delete Actor
+              type: http
+              seq: 6
+            http:
+              method: DELETE
+              url: '{{baseUrl}}/api/v1/actor/{{actorUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Delete Actor (Client)
+
+              Removes an actor (soft delete). Returns 204 No Content on success.
+          - info:
+              name: Get All Actors
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/actors'
+              params:
+                - name: relationTypeId
+                  value: ''
+                  type: query
+                  disabled: true
+                - name: activeOnly
+                  value: 'true'
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get All Actors for Client
+
+              Retrieves list of all actors related to a client with optional filters.
+
+              ## Query Parameters
+              - relationTypeId - Filter by relation type ID
+              - activeOnly - Show only active relations (boolean)
+          - info:
+              name: Update Actor
+              type: http
+              seq: 5
+            http:
+              method: PUT
+              url: '{{baseUrl}}/api/v1/actor/{{actorUuid}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "position": "CFO",
+                    "ownershipPercentage": 30.0,
+                    "ownershipDetail": "Updated details",
+                    "endDate": "2025-12-31",
+                    "contact": {
+                      "emailContact": "new-email@email.com",
+                      "phoneContact": "+420999888777"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "New Street 456",
+                        "city": "Brno",
+                        "zipCode": "60200",
+                        "countryCode": "CZ"
+                      }
+                    ],
+                    "naceCodes": ["62.01", "62.02"]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Update Actor (Client)
+
+              Updates actor: relation fields, contacts, addresses, NACE codes.
+
+              ## Update Rules
+              - Field NOT provided → field NOT touched
+              - Field provided with value → FULL REPLACEMENT
+              - Empty arrays [] are NOT allowed
+
+              ## Immutable Fields
+              - personType, naturalPerson, legalEntity, relationTypeId
+      - info:
+          name: Customer Actors
+          type: folder
+          seq: 3
+        items:
+          - info:
+              name: Create Actor - Natural
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/actor'
+              body:
+                type: json
+                data: |-
+                  {
+                    "personType": "NATURAL",
+                    "relationType": "DIRECTOR",
+                    "position": "CFO",
+                    "ownershipPercentage": 15.0,
+                    "startDate": "2024-06-01",
+                    "endDate": null,
+                    "ownershipDetail": "Minority shareholder",
+                    "naturalPerson": {
+                      "firstName": "Anna",
+                      "lastName": "Novakova",
+                      "birthDate": "1992-08-20",
+                      "personalIdentificationNumber": "{{pin10}}",
+                      "countryOfBirth": "CZ",
+                      "citizenship": "CZ",
+                      "gender": "FEMALE",
+                      "taxResidences": [
+                        {
+                          "countryCode": "CZ"
+                        }
+                      ]
+                    },
+                    "contact": {
+                      "emailContact": "anna-{{$timestamp}}@email.com",
+                      "phoneContact": "+420777666555"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "Customer Actor Street 1",
+                        "city": "Prague",
+                        "zipCode": "11000",
+                        "countryCode": "CZ"
+                      }
+                    ]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    // Generate valid CZ birth number (mod 11) with unique sequence
+                    const base = '920820';
+                    const ts = Date.now().toString();
+                    const seq = ts.slice(-3);
+                    const s = base + seq;
+                    const n = parseInt(s);
+                    let check = n % 11;
+                    if (check === 10) check = 0;
+                    bru.setVar("pin10", s + check);
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.actorUuid) {
+                        bru.setVar("actorUuid", body.actorUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Actor - Natural Person
+
+              Creates and links a natural person (director, beneficiary, etc.) to a customer.
+
+              ## Person Types
+              - NATURAL - Individual person (requires naturalPerson object)
+              - LEGAL - Legal entity (requires legalEntity object)
+
+              ## Relation Types
+              - DIRECTOR, SHAREHOLDER, BENEFICIAL_OWNER, AUTHORIZED_REPRESENTATIVE, etc.
+          - info:
+              name: Delete Actor
+              type: http
+              seq: 6
+            http:
+              method: DELETE
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/actor/{{actorUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Delete Actor
+
+              Removes an actor (soft delete). Returns 204 No Content on success.
+          - info:
+              name: Create Actor - Legal
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/actor'
+              body:
+                type: json
+                data: |-
+                  {
+                    "personType": "LEGAL",
+                    "relationType": "SHAREHOLDER",
+                    "ownershipPercentage": 40.0,
+                    "startDate": "2024-01-01",
+                    "legalEntity": {
+                      "legalName": "Customer Partner Company s.r.o.",
+                      "businessIdentificationNumber": "{{bin8}}",
+                      "legalForm": "s.r.o.",
+                      "dateOfIncorporation": "2015-05-01",
+                      "countryOfIncorporation": "CZ"
+                    },
+                    "contact": {
+                      "website": "https://partner-company.cz",
+                      "emailContact": "info-{{$timestamp}}@partner-company.cz",
+                      "phoneContact": "+420111000999"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "CORRESPONDENCE",
+                        "street": "Business Park 10",
+                        "city": "Brno",
+                        "zipCode": "60200",
+                        "countryCode": "CZ"
+                      }
+                    ]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    const weights = [8, 7, 6, 5, 4, 3, 2];
+                    const ts = Date.now().toString();
+                    const base7 = ts.slice(-7);
+                    let sum = 0;
+                    for (let i = 0; i < 7; i++) sum += parseInt(base7[i]) * weights[i];
+                    const remainder = sum % 11;
+                    let check;
+                    if (remainder === 0) check = 8;
+                    else if (remainder === 1) check = 0;
+                    else check = 11 - remainder;
+                    bru.setVar("bin8", base7 + check);
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.actorUuid) {
+                        bru.setVar("actorUuid", body.actorUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Actor - Legal Entity
+
+              Creates and links a legal entity (shareholder company) to a customer.
+
+              ## Required Fields
+              - personType - Must be "LEGAL"
+              - relationType - Relation type (SHAREHOLDER, etc.)
+              - legalEntity - Company details
+          - info:
+              name: Get All Actors
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/actors'
+              params:
+                - name: relationTypeId
+                  value: ''
+                  type: query
+                  disabled: true
+                - name: activeOnly
+                  value: 'true'
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get All Actors for Customer
+
+              Retrieves list of all actors related to a customer with optional filters.
+
+              ## Query Parameters
+              - relationTypeId - Filter by relation type ID
+              - activeOnly - Show only active relations (boolean)
+          - info:
+              name: Update Actor
+              type: http
+              seq: 5
+            http:
+              method: PUT
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/actor/{{actorUuid}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "position": "CEO",
+                    "ownershipPercentage": 20.0,
+                    "ownershipDetail": "Increased stake",
+                    "endDate": null,
+                    "contact": {
+                      "emailContact": "anna.updated@email.com",
+                      "phoneContact": "+420888777666"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "Updated Actor Street 100",
+                        "city": "Brno",
+                        "zipCode": "60200",
+                        "countryCode": "CZ"
+                      }
+                    ],
+                    "naceCodes": ["62.01", "62.02"]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Update Actor
+
+              Updates actor: relation fields, contacts, addresses, NACE codes.
+
+              ## Update Rules
+              - Field NOT provided → field NOT touched
+              - Field provided with value → FULL REPLACEMENT
+              - Empty arrays [] are NOT allowed
+
+              ## Immutable Fields
+              - personType (NATURAL/LEGAL)
+              - naturalPerson, legalEntity
+              - relationTypeId
+          - info:
+              name: Get Actor
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/actor/{{actorUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Actor by UUID
+
+              Retrieves detailed information about a specific actor related to a customer.
+      - info:
+          name: Client Customers
+          type: folder
+          seq: 6
+        items:
+          - info:
+              name: Get Client Customers
+              type: http
+              seq: 1
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customers?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+                - name: type
+                  value: NATURAL
+                  type: query
+                  disabled: true
+                - name: status
+                  value: ACTIVE
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get All Customers for Client
+
+              Returns a paginated list of all customers belonging to the specified client.
+
+              ## Query Parameters
+              - page - Page number (0-based, default: 0)
+              - size - Page size (default: 20)
+              - type - Filter by customer type: NATURAL, LEGAL, ENTREPRENEUR
+              - status - Filter by status: INITIAL, ACTIVE, SUSPENDED, etc.
+      - info:
+          name: Customer Payment Accounts
+          type: folder
+          seq: 4
+        items:
+          - info:
+              name: Create Payment Account - SEPA
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-account'
+              body:
+                type: json
+                data: |-
+                  {
+                    "iban": "CZ6508000000192000145399",
+                    "bankName": "Ceska sporitelna, a.s.",
+                    "accountHolderName": "Jan Novak",
+                    "countryCode": "CZ",
+                    "currencyCode": "EUR",
+                    "recipientUuid": "{{recipientUuid}}"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.paymentAccountUuid) {
+                        bru.setVar("paymentAccountUuid", body.paymentAccountUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Payment Account - SEPA
+
+              Adds a SEPA (IBAN-based) bank account for the customer.
+
+              ## Validation
+              - IBAN is validated and normalized
+              - Account can be auto-whitelisted based on business rules
+
+              ## Optional
+              - recipientUuid - UUID of a previously created recipient (beneficiary) to link
+
+              ## Important for LIMITED Wallets
+              If the customer has a LIMITED wallet, this payment account becomes
+              the only allowed destination for payouts (automatic whitelisting).
+          - info:
+              name: Create Payment Account - CZK Domestic
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-account'
+              body:
+                type: json
+                data: |-
+                  {
+                    "accountNumber": "2000145399",
+                    "bankCode": "0800",
+                    "bankName": "Ceska sporitelna, a.s.",
+                    "accountHolderName": "Jan Novak",
+                    "countryCode": "CZ",
+                    "currencyCode": "CZK",
+                    "recipientUuid": "{{recipientUuid}}"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.paymentAccountUuid) {
+                        bru.setVar("paymentAccountUuid", body.paymentAccountUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Payment Account - CZK Domestic
+
+              Adds a Czech domestic bank account for the customer.
+
+              ## Required for CZK Domestic
+              - accountNumber - Czech account number format
+              - bankCode - 4-digit bank code
+
+              ## Optional
+              - recipientUuid - UUID of a previously created recipient (beneficiary) to link
+          - info:
+              name: Create Payment Account - SWIFT
+              type: http
+              seq: 3
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-account'
+              body:
+                type: json
+                data: |-
+                  {
+                    "iban": "DE89370400440532013000",
+                    "bic": "COBADEFFXXX",
+                    "bankName": "Commerzbank AG",
+                    "accountHolderName": "Hans Mueller",
+                    "countryCode": "DE",
+                    "currencyCode": "EUR",
+                    "recipientUuid": "{{recipientUuid}}"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.paymentAccountUuid) {
+                        bru.setVar("paymentAccountUuid", body.paymentAccountUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Payment Account - SWIFT
+
+              Adds an international SWIFT bank account for the customer.
+
+              ## Required for SWIFT
+              - iban - International IBAN
+              - bic - SWIFT/BIC code
+
+              ## Optional
+              - recipientUuid - UUID of a previously created recipient (beneficiary) to link
+          - info:
+              name: Get All Payment Accounts
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-accounts?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get All Payment Accounts
+
+              Returns a paginated list of payment (bank) accounts for the specified customer.
+
+              ## Query Parameters
+              - `page` - Page number (0-based, default: 0)
+              - `size` - Page size (default: 20, max: 100)
+          - info:
+              name: Delete Payment Account
+              type: http
+              seq: 7
+            http:
+              method: DELETE
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-account/{{paymentAccountUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Delete Payment Account
+
+              Soft-deletes a payment account. Returns 204 No Content on success.
+              The account must belong to the specified customer.
+
+              Once deleted, the account will no longer appear in listing endpoints
+              and any linked recipient can be deleted.
+
+              ## Error Responses
+              - 400 - Account does not belong to the specified customer
+              - 404 - Payment account not found
+          - info:
+              name: Get Payment Account
+              type: http
+              seq: 5
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-account/{{paymentAccountUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Payment Account Detail
+
+              Retrieves detailed information about a specific payment account for a customer.
+
+              ## Response (200 OK)
+              ```json
+              {
+                "paymentAccountUuid": "ee0e8400-e29b-41d4-a716-446655440040",
+                "iban": "CZ6508000000192000145399",
+                "accountHolderName": "Jan Novák",
+                "currencyCode": "CZK",
+                "bankCode": "0800",
+                "bankName": "Česká spořitelna, a.s.",
+                "countryCode": "CZ",
+                "status": "VERIFIED",
+                "isWhitelisted": true,
+                "isVerified": true,
+                "recipientUuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                "recipientFullName": "Jana Novakova",
+                "wallets": [],
+                "createdAt": "2025-12-26T10:30:00Z"
+              }
+              ```
+
+              ## Notes
+              - recipientUuid and recipientFullName are present when a recipient is linked
+              - Includes associated wallets array
+          - info:
+              name: Update Payment Account Status
+              type: http
+              seq: 6
+            http:
+              method: PATCH
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/payment-account/{{paymentAccountUuid}}/status'
+              body:
+                type: json
+                data: |-
+                  {
+                    "status": "VERIFIED"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Update Payment Account Status
+
+              Updates the status of a payment account.
+              Validates ownership (account must belong to the customer in the URL).
+              Enforces wallet-type-specific transition rules.
+
+              ## STANDARD wallet transitions
+              - PENDING_VERIFICATION -> VERIFIED | BLOCKED
+              - VERIFIED -> BLOCKED
+              - BLOCKED -> PENDING_VERIFICATION
+
+              ## LIMITED wallet transitions
+              - WHITELIST -> BLOCKED
+              - BLOCKED -> WHITELIST
+
+              ## Payout eligibility
+              - STANDARD wallets require VERIFIED status
+              - LIMITED wallets require WHITELIST status
+              - BLOCKED accounts cannot process payouts
+      - info:
+          name: Customer
+          type: folder
+          seq: 2
+        items:
+          - info:
+              name: Create Customer - Entrepreneur
+              type: http
+              seq: 3
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer'
+              body:
+                type: json
+                data: |-
+                  {
+                    "type": "ENTREPRENEUR",
+                    "relationship": "LEND",
+                    "riskLevel": "LOW",
+                    "customerIdInPlatform": "EXT-ENT-{{$timestamp}}",
+                    "naturalPerson": {
+                      "firstName": "Jane",
+                      "lastName": "Smith",
+                      "birthDate": "1985-03-20",
+                      "personalIdentificationNumber": "{{pin10}}",
+                      "citizenship": "CZ",
+                      "gender": "FEMALE",
+                      "taxResidences": [{"countryCode": "CZ"}]
+                    },
+                    "businessProfile": {
+                      "typeOfNatural": "ENTREPRENEUR",
+                      "businessIdentificationNumber": "{{bin8}}"
+                    },
+                    "registrationContact": {
+                      "registrationEmail": "entrepreneur-{{$timestamp}}@test.cz",
+                      "registrationPhone": "+420777999888"
+                    },
+                    "personContact": {
+                      "emailContact": "ent-{{$timestamp}}@test.cz",
+                      "phoneContact": "+420777999777"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "Home Street 1",
+                        "city": "Prague",
+                        "zipCode": "11000",
+                        "countryCode": "CZ"
+                      }
+                    ],
+                    "naceCodes": ["62.01", "62.02"]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    // Generate valid CZ birth number: YYMMDD + 3-digit seq + check (full 10-digit number mod 11 == 0)
+                    const base = '850320';
+                    const ts = Date.now().toString();
+                    for (let seq = parseInt(ts.slice(-3)); seq < 999; seq++) {
+                      const s = base + String(seq).padStart(3, '0');
+                      const n = parseInt(s);
+                      const check = n % 11;
+                      if (check === 10) continue;
+                      const full = s + check;
+                      if (parseInt(full) % 11 === 0) {
+                        bru.setVar("pin10", full);
+                        break;
+                      }
+                    }
+                    // Generate valid ICO
+                    const weights = [8, 7, 6, 5, 4, 3, 2];
+                    const base7 = ts.slice(-7);
+                    let sum = 0;
+                    for (let i = 0; i < 7; i++) sum += parseInt(base7[i]) * weights[i];
+                    const remainder = sum % 11;
+                    let icoCheck;
+                    if (remainder === 0) icoCheck = 8;
+                    else if (remainder === 1) icoCheck = 0;
+                    else icoCheck = 11 - remainder;
+                    bru.setVar("bin8", base7 + icoCheck);
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.customerUuid) {
+                        bru.setVar("customerUuid", body.customerUuid);
+                      }
+                      if (body.personUuid) {
+                        bru.setVar("personUuid", body.personUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Customer - Entrepreneur
+
+              Creates a self-employed (entrepreneur) customer.
+
+              ## Required Fields
+              - clientUuid - Parent client UUID
+              - type - Must be "ENTREPRENEUR"
+              - naturalPerson - Person details
+              - businessProfile - Business details (typeOfNatural, businessIdentificationNumber)
+          - info:
+              name: Create Customer - Natural
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer'
+              body:
+                type: json
+                data: |-
+                  {
+                    "type": "NATURAL",
+                    "relationship": "INVEST_LEND",
+                    "riskLevel": "LOW",
+                    "customerIdInPlatform": "EXT-NAT-{{$timestamp}}",
+                    "naturalPerson": {
+                      "firstName": "John",
+                      "lastName": "Doe",
+                      "birthDate": "1990-05-15",
+                      "personalIdentificationNumber": "9005150011",
+                      "countryOfBirth": "CZ",
+                      "citizenship": "CZ",
+                      "gender": "MALE",
+                      "taxResidences": [
+                        {
+                          "countryCode": "CZ"
+                        }
+                      ]
+                    },
+                    "registrationContact": {
+                      "registrationEmail": "john-{{$timestamp}}@email.com",
+                      "registrationPhone": "+420123456789"
+                    },
+                    "personContact": {
+                      "emailContact": "john-{{$timestamp}}@personal.com",
+                      "phoneContact": "+420987654321"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "Oak Avenue 45",
+                        "city": "Prague",
+                        "zipCode": "12000",
+                        "countryCode": "CZ"
+                      }
+                    ]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.customerUuid) {
+                        bru.setVar("customerUuid", body.customerUuid);
+                      }
+                      if (body.personUuid) {
+                        bru.setVar("personUuid", body.personUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Customer - Natural Person
+
+              Creates a natural person (individual) customer.
+
+              ## Required Fields
+              - clientUuid - Parent client UUID
+              - type - Must be "NATURAL"
+              - naturalPerson - Person details
+
+              ## Relationship Types
+              - INVEST - Investment relationship
+              - LEND - Lending relationship
+              - INVEST_LEND - Both investment and lending
+
+              ## Notes
+              - Customer is created with INITIAL status
+              - personUuid is auto-generated for the new person
+          - info:
+              name: Create Customer - Legal
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer'
+              body:
+                type: json
+                data: |-
+                  {
+                    "type": "LEGAL",
+                    "relationship": "INVEST",
+                    "riskLevel": "LOW",
+                    "customerIdInPlatform": "EXT-LEG-{{runId}}",
+                    "legalEntity": {
+                      "legalName": "Customer Company s.r.o.",
+                      "businessIdentificationNumber": "{{bin8}}",
+                      "legalForm": "s.r.o.",
+                      "dateOfIncorporation": "2018-01-01",
+                      "countryOfIncorporation": "CZ"
+                    },
+                    "registrationContact": {
+                      "registrationEmail": "company-{{runId}}@email.com",
+                      "registrationPhone": "+420111222333"
+                    },
+                    "personContact": {
+                      "emailContact": "office@customer-company.cz",
+                      "phoneContact": "+420111222444"
+                    },
+                    "taxRegistrations": [
+                      {
+                        "countryCode": "CZ",
+                        "taxIdentificationNumber": "CZ87654321",
+                        "taxType": "VAT"
+                      }
+                    ],
+                    "addresses": [
+                      {
+                        "addressType": "CORRESPONDENCE",
+                        "street": "Business Park 10",
+                        "city": "Brno",
+                        "zipCode": "60200",
+                        "countryCode": "CZ"
+                      }
+                    ],
+                    "naceCodes": ["64.19", "66.19"]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: before-request
+                  code: |-
+                    const weights = [8, 7, 6, 5, 4, 3, 2];
+                    const ts = Date.now().toString();
+                    const base7 = ts.slice(-7);
+                    let sum = 0;
+                    for (let i = 0; i < 7; i++) sum += parseInt(base7[i]) * weights[i];
+                    const remainder = sum % 11;
+                    let check;
+                    if (remainder === 0) check = 8;
+                    else if (remainder === 1) check = 0;
+                    else check = 11 - remainder;
+                    bru.setVar("bin8", base7 + check);
+                    bru.setVar("runId", ts.slice(-6));
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.customerUuid) {
+                        bru.setVar("customerUuid", body.customerUuid);
+                      }
+                      if (body.personUuid) {
+                        bru.setVar("personUuid", body.personUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Customer - Legal Entity
+
+              Creates a legal entity (company) customer.
+
+              ## Required Fields
+              - clientUuid - Parent client UUID
+              - type - Must be "LEGAL"
+              - legalEntity - Company details
+
+              ## Legal Entity Fields
+              - legalName - Official company name
+              - businessIdentificationNumber - IČO or equivalent
+              - legalForm - Legal form (a.s., s.r.o., GmbH, etc.)
+              - dateOfIncorporation - Registration date
+              - countryOfIncorporation - Country code
+          - info:
+              name: List Customers
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customers?page=0&size=20'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+                - name: type
+                  value: NATURAL
+                  type: query
+                  disabled: true
+                - name: status
+                  value: ACTIVE
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # List Customers
+
+              Returns a paginated list of all customers across all clients.
+
+              ## Query Parameters
+              - page - Page number (0-based, default: 0)
+              - size - Page size (default: 20)
+              - type - Filter by type: NATURAL, LEGAL, ENTREPRENEUR
+              - status - Filter by status: INITIAL, ACTIVE, SUSPENDED, etc.
+          - info:
+              name: Update Customer Status
+              type: http
+              seq: 7
+            http:
+              method: PATCH
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/status'
+              body:
+                type: json
+                data: |-
+                  {
+                    "status": "ACTIVE"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Update Customer Status
+
+              Updates the status of a customer.
+
+              ## Available Statuses
+              - INITIAL - Initial status after creation
+              - PENDING_SETUP - Pending verification/setup
+              - ACTIVE - Active and verified
+              - SUSPENDED - Temporarily suspended
+              - BLOCKED - Blocked
+              - CLOSED - Closed/Terminated
+              - INACTIVE - Inactive
+
+              ## Notes
+              - Status transitions are validated. Not all transitions are allowed.
+          - info:
+              name: Update Customer
+              type: http
+              seq: 6
+            http:
+              method: PUT
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}'
+              body:
+                type: json
+                data: |-
+                  {
+                    "relationship": "INVEST",
+                    "customerIdInPlatform": "UPDATED-EXT-001",
+                    "registrationContact": {
+                      "registrationEmail": "updated-email@email.com",
+                      "registrationPhone": "+420999888777"
+                    },
+                    "personContact": {
+                      "emailContact": "updated-contact@email.com",
+                      "phoneContact": "+420666555444"
+                    },
+                    "addresses": [
+                      {
+                        "addressType": "RESIDENTIAL",
+                        "street": "New Street 789",
+                        "city": "Brno",
+                        "zipCode": "60200",
+                        "countryCode": "CZ"
+                      }
+                    ]
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Update Customer
+
+              Updates customer data (relationship, contacts, addresses, tax registrations, NACE codes).
+
+              ## Update Rules
+              - Field NOT provided → field NOT touched
+              - Field provided with value → FULL REPLACEMENT
+              - Empty arrays [] are NOT allowed (returns 400)
+
+              ## Immutable Fields (cannot be updated)
+              - type (NATURAL/LEGAL/ENTREPRENEUR)
+              - naturalPerson, legalEntity, businessProfile
+              - status (use PATCH /status endpoint)
+          - info:
+              name: Get Customer
+              type: http
+              seq: 5
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}'
+              headers:
+                - name: X-SSL-Client-Cert
+                  value: '{{clientCert}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Customer by UUID
+
+              Retrieves customer information by UUID.
+
+              ## Response
+              - customerUuid, clientUuid, personUuid
+              - type (NATURAL/LEGAL/ENTREPRENEUR)
+              - relationship, customerIdInPlatform
+              - Name fields (firstName/lastName or legalName)
+              - statusName, createdAt
+      - info:
+          name: Debug
+          type: folder
+          seq: 14
+        items:
+          - info:
+              name: Charge Wallet (DEBUG)
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/wallet/charge/debug'
+              body:
+                type: json
+                data: |-
+                  {
+                    "walletUuid": "{{walletUuid}}",
+                    "amount": 100000,
+                    "scale": 2
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # DEBUG - Charge Wallet
+
+              **Non-production use only.** Simulates a PayIn by adding funds to a wallet.
+
+              ## Fields
+              - walletUuid - UUID of the wallet to charge
+              - amount - Amount in minor units
+              - scale - Decimal places
+
+              ## Amount Calculation
+              Example: amount=100000, scale=2 → 1000.00 EUR added
+
+              ## Note
+              This endpoint will be disabled in production.
+      - info:
+          name: Holds
+          type: folder
+          seq: 9
+        items:
+          - info:
+              name: Create Hold
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/hold'
+              body:
+                type: json
+                data: |-
+                  {
+                    "walletUuid": "{{walletUuid}}",
+                    "amount": 15000,
+                    "scale": 2
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.holdUuid) {
+                        bru.setVar("holdUuid", body.holdUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Hold
+
+              Creates a hold (reservation) on wallet funds.
+
+              ## Effects
+              - Specified amount is reserved
+              - Available balance is reduced by hold amount
+              - Total balance remains unchanged
+
+              ## Fields
+              - walletUuid - UUID of the wallet to hold funds from
+              - amount - Amount to hold in minor units
+              - scale - Decimal places (e.g., 2 for cents)
+
+              ## Amount Calculation
+              Example: amount=15000, scale=2 → 150.00 EUR held
+          - info:
+              name: Get Customer Holds
+              type: http
+              seq: 5
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/holds?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Customer Holds
+
+              Returns a paginated list of all holds for wallets belonging to the specified customer.
+          - info:
+              name: Get Hold
+              type: http
+              seq: 2
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/hold/{{holdUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Hold
+
+              Returns details of a hold by UUID.
+          - info:
+              name: Get Client Holds
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/holds?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Client Holds
+
+              Returns a paginated list of all holds for wallets belonging to the specified client.
+          - info:
+              name: Release Hold
+              type: http
+              seq: 3
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/hold/{{holdUuid}}/release'
+              body:
+                type: json
+                data: |-
+                  {
+                    "reason": "Transaction cancelled",
+                    "force": false
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Release Hold
+
+              Releases a hold, freeing the reserved funds.
+
+              ## Effects
+              - Reserved amount becomes available again
+              - If hold had transactions: status → RELEASED
+              - If hold had no transactions: status → CANCELLED
+
+              ## Preconditions
+              - Hold must be in ACTIVE status
+              - Hold must have no active reservations (unless force: true)
+
+              ## Fields
+              - reason - Reason for releasing
+              - force - Use true to release even with active reservations
+      - info:
+          name: Payout Approvals
+          type: folder
+          seq: 11
+        items:
+          - info:
+              name: Approve Payout
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/payment/payout/{{paymentUuid}}/approve'
+              body:
+                type: json
+                data: |-
+                  {
+                    "comment": "Payout approved",
+                    "slot": 1
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Approve Payout Payment [NOT IN CLIENT API]
+
+              **This endpoint is NOT available in the Client API (not in client-openapi.yml allowlist).**
+              Returns 404 via /api/v1/. Use Internal API (/api/person/) for payout approval.
+
+              Approves a payout payment request.
+
+              ## Dual-Slot Approval
+              Payout payments require both slot 1 and slot 2 to approve before execution.
+              The slot field is required.
+
+              ## Fields
+              - comment - Approval comment (optional)
+              - slot - Approval slot number (1 or 2, required)
+
+              ## Note
+              The approver identity is resolved from the JWT security context.
+          - info:
+              name: Reject Payout
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/payment/payout/{{paymentUuid}}/reject'
+              body:
+                type: json
+                data: |-
+                  {
+                    "comment": "Payout rejected - invalid beneficiary",
+                    "slot": 2
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Reject Payout Payment [NOT IN CLIENT API]
+
+              **This endpoint is NOT available in the Client API (not in client-openapi.yml allowlist).**
+              Returns 404 via /api/v1/. Use Internal API (/api/person/) for payout rejection.
+
+              Rejects a payout payment request.
+
+              Either slot rejecting triggers full rejection of the payout.
+
+              ## Fields
+              - comment - Rejection reason (optional)
+              - slot - Approval slot number (1 or 2, required)
+      - info:
+          name: Payins
+          type: folder
+          seq: 12
+        items:
+          - info:
+              name: Get Wallet Payins
+              type: http
+              seq: 1
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/payins?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+                - name: fromDate
+                  value: '2025-01-01'
+                  type: query
+                  disabled: true
+                - name: toDate
+                  value: '2025-12-31'
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Wallet Payin Payments
+
+              Returns a paginated list of incoming payin payments for a wallet with optional date filtering.
+
+              ## Query Parameters
+              - page - Page number (0-based)
+              - size - Page size (default: 20)
+              - fromDate - Filter from this date (inclusive, YYYY-MM-DD)
+              - toDate - Filter until this date (inclusive, YYYY-MM-DD)
+      - info:
+          name: Person Documents
+          type: folder
+          seq: 13
+        items:
+          - info:
+              name: Change Document Status
+              type: http
+              seq: 6
+            http:
+              method: PATCH
+              url: '{{baseUrl}}/api/v1/person/document/{{documentUuid}}/status'
+              body:
+                type: json
+                data: |-
+                  {
+                    "status": "APPROVED"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Change Document Status
+
+              Change the status of a document.
+
+              ## Statuses settable via API
+              - APPROVED - Document approved (records approvedByUserId)
+              - REJECTED - Document rejected (requires rejectionReason)
+
+              ## Statuses NOT settable via API
+              - CREATED - Set automatically on upload and after reclassification
+              - DELETED - Set automatically on re-upload
+
+              ## Restrictions
+              - APPROVED and REJECTED are final — cannot be changed once set
+              - Rejection requires a rejectionReason field
+          - info:
+              name: Delete Document
+              type: http
+              seq: 8
+            http:
+              method: DELETE
+              url: '{{baseUrl}}/api/v1/person/document/{{documentUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Delete Document [NOT IN CLIENT API]
+
+              **This endpoint is NOT available in the Client API (not in client-openapi.yml allowlist).**
+              Returns 405 Method Not Allowed via /api/v1/.
+              Use Internal API (/api/person/) for document deletion.
+
+              Soft-deletes a document. The document is marked as deleted and no longer returned in list endpoints.
+              Returns 204 No Content on success.
+          - info:
+              name: Download Document Content
+              type: http
+              seq: 5
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/person/document/{{documentUuid}}/content'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Download Document File
+
+              Download the binary file content of a document.
+              Response Content-Type: application/octet-stream
+          - info:
+              name: Get Document
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/person/document/{{documentUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Document
+
+              Get document metadata without file details.
+          - info:
+              name: List Documents
+              type: http
+              seq: 2
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/person/{{personUuid}}/documents'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # List Documents
+
+              List all non-deleted documents for a person in external format (no file details).
+          - info:
+              name: Re-upload Document
+              type: http
+              seq: 4
+            http:
+              method: PUT
+              url: '{{baseUrl}}/api/v1/person/document/{{documentUuid}}'
+              body:
+                type: multipart-form
+                data:
+                  - name: metadata
+                    type: text
+                    value: '{"documentType":"PASSPORT","documentNumber":"AB1234568","issuingCountryCode":"CZ","issuingDate":"2025-01-15","expirationDate":"2035-01-15","category":"PERSONAL_ID","description":"Updated front page scan"}'
+                  - name: file
+                    type: file
+                    value:
+                      - ''
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Re-upload Document
+
+              Re-upload a document with new metadata and file. Creates a new version
+              with a new UUID; the old version is marked SUPERSEDED and soft-deleted.
+          - info:
+              name: Reclassify Document
+              type: http
+              seq: 7
+            http:
+              method: PUT
+              url: '{{baseUrl}}/api/v1/person/document/{{documentUuid}}/classification'
+              body:
+                type: json
+                data: |-
+                  {
+                    "documentType": "ID_CARD",
+                    "category": "PERSONAL_ID"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Reclassify Document
+
+              Change the document type and/or category.
+              Both fields are optional. Resets status to CREATED.
+          - info:
+              name: Upload Document
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/person/{{personUuid}}/document'
+              body:
+                type: multipart-form
+                data:
+                  - name: metadata
+                    type: text
+                    value: '{"documentType":"PASSPORT","documentNumber":"AB1234567","issuingCountryCode":"CZ","issuingDate":"2020-01-15","expirationDate":"2030-01-15","category":"PERSONAL_ID","description":"Front page scan"}'
+                  - name: file
+                    type: file
+                    value:
+                      - ''
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Upload Document
+
+              Upload a new document with metadata and file for a person.
+
+              ## Content-Type: multipart/form-data
+              - metadata part: JSON string with document metadata
+              - file part: Binary file (PDF, JPEG, or PNG, max 10MB)
+
+              ## Metadata Fields
+              - documentType (required) - Document type code from reference data
+              - documentNumber (required, max 64) - Document number
+              - issuingCountryCode (optional, 2 chars) - ISO country code
+              - issuingDate (optional) - Date of issue (YYYY-MM-DD)
+              - expirationDate (optional) - Expiration date (YYYY-MM-DD)
+              - category (optional, max 50) - Document category code
+              - description (optional, max 500) - Freetext description
+
+              ## Notes
+              - If expirationDate is in the past, status is auto-set to REJECTED
+              - Otherwise status is CREATED
+      - info:
+          name: Payouts
+          type: folder
+          seq: 10
+        items:
+          - info:
+              name: Create Payout - CZK Domestic
+              type: http
+              seq: 3
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/wallet/bank-account/{{paymentAccountUuid}}/payout'
+              body:
+                type: json
+                data: |-
+                  {
+                    "idempotencyKey": "unique-key-czk-{{$timestamp}}",
+                    "debitWalletUuid": "{{walletUuid}}",
+                    "paymentType": "CZK_DOMESTIC",
+                    "amount": 250000,
+                    "scale": 2,
+                    "reference": "Faktura 2025001",
+                    "variableSymbol": "2025001",
+                    "constantSymbol": "0308",
+                    "specificSymbol": "123"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Payout - CZK Domestic
+
+              Creates a Czech domestic payout request (CZK only).
+
+              ## Czech Payment Symbols
+              - variableSymbol - 1-10 digits, typically invoice number
+              - specificSymbol - 1-10 digits, additional identification
+              - constantSymbol - exactly 4 digits (e.g., 0308 for services)
+          - info:
+              name: Create Payout - SEPA
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/wallet/bank-account/{{paymentAccountUuid}}/payout'
+              body:
+                type: json
+                data: |-
+                  {
+                    "idempotencyKey": "unique-key-sepa-{{$timestamp}}",
+                    "debitWalletUuid": "{{walletUuid}}",
+                    "paymentType": "SEPA",
+                    "amount": 15050,
+                    "scale": 2,
+                    "reference": "Invoice 2025-001",
+                    "dueDate": "2026-02-15"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Payout - SEPA
+
+              Creates a SEPA payout request to transfer EUR from a wallet to a bank account.
+
+              ## Flow
+              1. Payment account ownership and verification status are validated
+              2. Funds are reserved on the wallet
+              3. Request is sent to the bank
+              4. Bank processes the transfer and sends callback
+              5. On success, funds are debited from the wallet
+
+              ## Note
+              Asynchronous operation. Response contains payout ID for status tracking.
+          - info:
+              name: Create Payout - SWIFT
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/wallet/bank-account/{{paymentAccountUuid}}/payout'
+              body:
+                type: json
+                data: |-
+                  {
+                    "idempotencyKey": "unique-key-swift-{{$timestamp}}",
+                    "debitWalletUuid": "{{walletUuid}}",
+                    "paymentType": "SWIFT",
+                    "amount": 50000,
+                    "scale": 2,
+                    "reference": "Contract #999",
+                    "dueDate": "2026-02-20"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Payout - SWIFT
+
+              Creates a SWIFT international payout request (multi-currency).
+          - info:
+              name: Get Wallet Payouts
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/payouts?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+                - name: fromDate
+                  value: '2025-01-01'
+                  type: query
+                  disabled: true
+                - name: toDate
+                  value: '2025-12-31'
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Wallet Payout Payments
+
+              Returns paginated list of payout payments for a wallet with optional date filtering.
+
+              ## Query Parameters
+              - page - Page number (0-based)
+              - size - Page size (default: 20)
+              - fromDate - Filter from this date (inclusive, YYYY-MM-DD)
+              - toDate - Filter until this date (inclusive, YYYY-MM-DD)
+      - info:
+          name: Recipients
+          type: folder
+          seq: 5
+        items:
+          - info:
+              name: Delete Recipient
+              type: http
+              seq: 4
+            http:
+              method: DELETE
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/recipient/{{recipientUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Delete Recipient
+
+              Soft-deletes a recipient. Returns 204 No Content on success.
+
+              ## Preconditions
+              - No active payment accounts may reference this recipient
+              - Deletion not allowed for LIMITED wallet customers
+
+              ## Error Responses
+              - 400 - Active payment accounts reference this recipient, or LIMITED wallet restriction
+              - 404 - Customer or recipient not found
+          - info:
+              name: Get Recipient
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/recipient/{{recipientUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Recipient by UUID
+
+              Returns a specific recipient. Validates the recipient belongs to the customer.
+
+              ## Response (200 OK)
+              ```json
+              {
+                "recipientUuid": "...",
+                "customerUuid": "...",
+                "type": "NATURAL",
+                "firstName": "Jana",
+                "lastName": "Novakova",
+                "fullName": "Jana Novakova",
+                "isAutoCreated": false,
+                "nationalityCode": "CZ",
+                "addressLine1": "Vodickova 710/31",
+                "city": "Prague",
+                "postalCode": "11000",
+                "countryCode": "CZ",
+                "countryName": "Czech Republic",
+                "createdAt": "2026-03-06T12:00:00Z"
+              }
+              ```
+
+              ## Error Responses
+              - 400 - Recipient does not belong to the specified customer
+              - 404 - Customer or recipient not found
+          - info:
+              name: Create Recipient - Natural
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/recipient'
+              body:
+                type: json
+                data: |-
+                  {
+                    "type": "NATURAL",
+                    "firstName": "Jana",
+                    "lastName": "Novakova",
+                    "nationalityCode": "CZ",
+                    "addressLine1": "Vodickova 710/31",
+                    "city": "Prague",
+                    "postalCode": "11000",
+                    "countryCode": "CZ",
+                    "tag": "test-recipient"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.recipientUuid) {
+                        bru.setEnvVar("recipientUuid", body.recipientUuid);
+                        console.log("Recipient created:", body.recipientUuid, "(" + body.fullName + ")");
+                      }
+                    } else {
+                      console.log("CREATE RECIPIENT FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Recipient - Natural Person
+
+              Creates a new payment recipient (beneficiary) for the specified customer.
+
+              ## Recipient Types
+              - `NATURAL` - Individual person (requires firstName + lastName)
+              - `LEGAL` - Legal entity (requires legalName)
+
+              ## Required Fields
+              - type, addressLine1, city, postalCode, countryCode
+              - firstName + lastName (for NATURAL)
+
+              ## Constraints
+              - Derived fullName (firstName + lastName) must not exceed 35 characters (SEPA/SWIFT)
+              - SEPA character set only (no diacritics)
+              - nickname must be alphanumeric and unique per customer (case-insensitive)
+              - Manual creation NOT allowed for LIMITED wallet customers
+
+              ## Response (201 Created)
+              Returns RecipientResponse with recipientUuid, fullName, isAutoCreated, etc.
+          - info:
+              name: Get All Recipients
+              type: http
+              seq: 2
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/recipients'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                  disabled: true
+                - name: size
+                  value: '20'
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get All Recipients for Customer
+
+              Returns a paginated list of recipients (payment beneficiaries) for the specified customer.
+
+              ## Query Parameters
+              - `page` - Page number (0-based, default: 0)
+              - `size` - Page size (default: 20, max: 100)
+
+              ## Response (200 OK)
+              Paginated list with content[], pageable, totalElements, totalPages.
+          - info:
+              name: Create Recipient - Legal
+              type: http
+              seq: 5
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/recipient'
+              body:
+                type: json
+                data: |-
+                  {
+                    "type": "LEGAL",
+                    "legalName": "Partner Company s.r.o.",
+                    "organisationId": "87654321",
+                    "addressLine1": "Business Park 10",
+                    "city": "Brno",
+                    "postalCode": "60200",
+                    "countryCode": "CZ",
+                    "tag": "legal-test"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.recipientUuid) {
+                        console.log("Legal recipient created:", body.recipientUuid, "(" + body.fullName + ")");
+                      }
+                    } else {
+                      console.log("CREATE LEGAL RECIPIENT FAILED:", res.status, JSON.stringify(res.getBody()));
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Recipient - Legal Entity
+
+              Creates a new LEGAL recipient (company/organisation) for the specified customer.
+
+              ## Required Fields
+              - type: "LEGAL"
+              - legalName - Company/organisation name (SEPA charset, max 255)
+              - addressLine1, city, postalCode, countryCode
+
+              ## Optional Fields
+              - organisationId - Business register number
+              - lei - Legal Entity Identifier
+              - nickname - Alphanumeric, unique per customer
+              - tag - User-defined label
+
+              ## Constraints
+              - legalName must not exceed 35 characters for SEPA/SWIFT
+              - SEPA character set only (no diacritics)
+              - Manual creation NOT allowed for LIMITED wallet customers
+
+              ## Response (201 Created)
+              Returns RecipientResponse with recipientUuid, fullName (= legalName), isAutoCreated=false.
+      - info:
+          name: Transfers
+          type: folder
+          seq: 8
+        items:
+          - info:
+              name: Create Transfer
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/transfer'
+              body:
+                type: json
+                data: |-
+                  {
+                    "debitWalletUuid": "{{walletUuid}}",
+                    "creditWalletUuid": "{{clientWalletUuid}}",
+                    "amount": 10050,
+                    "scale": 2,
+                    "description": "Transfer between accounts",
+                    "txIdentifier": "TX-{{$timestamp}}"
+                  }
+              auth:
+                type: bearer
+                token: ory_at_RP_L__a7rmahViPDBcTrUzCQ9q4-2HC7sMR_IkDDpWQ.nD2kCayXYgzN9euOyBa077f_Tbq7paudiYfR-0oPLEk
+            runtime:
+              variables:
+                - name: clientWalletUuid
+                  value: 7a2fb950-2d7a-4c4f-aa58-5c11ac6f4c8c
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.transferUuid) {
+                        bru.setVar("transferUuid", body.transferUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Transfer
+
+              Creates an internal transfer between two wallets. Processed immediately.
+
+              ## Fields
+              - debitWalletUuid - Source wallet (funds debited from)
+              - creditWalletUuid - Destination wallet (funds credited to)
+              - amount - Amount in minor units
+              - scale - Decimal places (e.g., 2 for cents)
+              - description - Transfer description
+              - txIdentifier - Unique transaction identifier
+              - holdUuid - Optional hold UUID to use reserved funds
+              - releaseHold - Whether to release the hold upon completion
+
+              ## Amount Calculation
+              Example: amount=10050, scale=2 → 100.50 EUR
+          - info:
+              name: Get Wallet Transfers
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/transfers?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+                - name: fromDate
+                  value: '2025-01-01'
+                  type: query
+                  disabled: true
+                - name: toDate
+                  value: '2025-12-31'
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Wallet Transfers
+
+              Returns a paginated list of transfers for a wallet with optional date filtering.
+
+              ## Query Parameters
+              - page - Page number (0-based)
+              - size - Page size (default: 20)
+              - fromDate - Filter from this date (inclusive, YYYY-MM-DD)
+              - toDate - Filter until this date (inclusive, YYYY-MM-DD)
+          - info:
+              name: Get Transfer
+              type: http
+              seq: 2
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/transfer/{{transferUuid}}'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Transfer
+
+              Returns details of an internal transfer including status, transactions, and reservations.
+      - info:
+          name: Wallets
+          type: folder
+          seq: 7
+        items:
+          - info:
+              name: Get Wallet Detail
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/detail'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Wallet Details
+
+              Returns full detailed information about a specific wallet by its UUID.
+
+              ## Response Fields
+              - walletUuid, clientUuid, customerUuid
+              - nickname, iban, currencyCode
+              - typeName (STANDARD, LIMITED, FEE)
+              - statusName (ACTIVE, FROZEN, BLOCKED, etc.)
+              - providerName, createdAt, updatedAt
+          - info:
+              name: Get Customer Wallets
+              type: http
+              seq: 2
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/wallets?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+                - name: type
+                  value: STANDARD
+                  type: query
+                  disabled: true
+                - name: currencyCode
+                  value: EUR
+                  type: query
+                  disabled: true
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Customer Wallets
+
+              Returns a paginated list of wallets belonging to the specified customer.
+
+              ## Query Parameters
+              - page - Page number (0-based, default: 0)
+              - size - Page size (default: 20)
+              - type - Filter by wallet type: STANDARD, FEE
+              - currencyCode - Filter by currency code (ISO 4217)
+          - info:
+              name: Get Wallet Payment Information
+              type: http
+              seq: 10
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/payment-information'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Wallet Payment Information
+
+              Returns payment information for the specified wallet.
+              Fields depend on the wallet's payment rail and bank connector setup.
+
+              ## Response by payment rail
+
+              **CZK Domestic:** beneficiary, accountNumber, bankCode
+              **SEPA:** beneficiary, iban, bic
+              **SWIFT:** beneficiary, iban, bic, bankName, bankAddress
+
+              Fields not applicable to the wallet's payment rail are omitted.
+
+              ## Error Responses
+              - 404 - Wallet not found
+          - info:
+              name: Get Client Customer Wallets
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/customers/wallets?page=0&size=20'
+              params:
+                - name: page
+                  value: '0'
+                  type: query
+                - name: size
+                  value: '20'
+                  type: query
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get All Customer Wallets for Client
+
+              Returns a paginated list of all customer wallets belonging to the specified client.
+              Useful for clients to see all wallets of their customers in a single request.
+          - info:
+              name: Update Wallet Status
+              type: http
+              seq: 8
+            http:
+              method: PATCH
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/status/ACTIVE'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Update Wallet Status
+
+              Updates the status of a wallet. Replace ACTIVE in the URL with the desired status.
+
+              ## Available Statuses
+              - PENDING, ACTIVE, FROZEN, BLOCKED, BLACKLISTED, CLOSED
+
+              ## Note
+              This endpoint is intended for testing purposes only and will not be available in production.
+          - info:
+              name: Create Customer Wallet
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/customer/{{customerUuid}}/wallet'
+              body:
+                type: json
+                data: |-
+                  {
+                    "currencyCode": "EUR",
+                    "nickname": "Main EUR Wallet",
+                    "reference": "REF-12345",
+                    "walletType": "LIMITED"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            runtime:
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.status === 201) {
+                      const body = res.getBody();
+                      if (body.walletUuid) {
+                        bru.setVar("walletUuid", body.walletUuid);
+                      }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Create Wallet for Customer
+
+              Creates a new wallet linked to a specific customer. IBAN is generated automatically.
+
+              ## Wallet Types
+              - STANDARD - Regular wallet for transactions (default)
+              - LIMITED - Wallet with restricted functionality
+
+              ## Fields
+              - clientUuid - Parent client UUID
+              - currencyCode - ISO 4217 currency code (EUR, CZK, USD, etc.)
+              - nickname - Wallet display name
+              - reference - External reference
+              - walletType - STANDARD or LIMITED
+          - info:
+              name: Freeze Wallet
+              type: http
+              seq: 7
+            http:
+              method: POST
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/freeze'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Freeze Wallet [NOT IN CLIENT API]
+
+              **This endpoint is NOT available in the Client API (not in client-openapi.yml allowlist).**
+              Returns 404 via /api/v1/. Use Internal API (/api/person/) for wallet freeze.
+
+              Freezes a wallet, preventing any transactions.
+
+              ## Effects
+              - No new transactions can be initiated from/to this wallet
+              - Existing holds remain active
+              - Wallet status changes to FROZEN
+          - info:
+              name: Update Wallet Nickname
+              type: http
+              seq: 5
+            http:
+              method: PATCH
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/nickname'
+              body:
+                type: json
+                data: |-
+                  {
+                    "nickname": "Updated Wallet Name"
+                  }
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Update Wallet Nickname
+
+              Updates the nickname of a wallet.
+          - info:
+              name: Get Wallet Balance
+              type: http
+              seq: 6
+            http:
+              method: GET
+              url: '{{baseUrl}}/api/v1/wallet/{{walletUuid}}/balance'
+              auth:
+                type: bearer
+                token: '{{accessToken}}'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            docs: |-
+              # Get Wallet Balances
+
+              Returns current available and hold balances of the wallet.
+
+              ## Response Fields
+              - walletUuid
+              - totalBalanceMinor / totalBalance
+              - availableBalanceMinor / availableBalance
+              - holdBalanceMinor / holdBalance
+              - pendingIncomingMinor / pendingIncoming
+              - pendingOutgoingMinor / pendingOutgoing
+              - totalIncomingMinor / totalIncoming
+              - totalOutgoingMinor / totalOutgoing
+request:
+  headers:
+    - name: Content-Type
+      value: application/json
+  auth:
+    type: basic
+    username: ''
+    password: ''
+  scripts:
+    - type: before-request
+      code: |-
+        // --- Internal API: inject JWT cookie ---
+        const jwtToken = bru.getVar("jwtToken");
+        if (jwtToken) {
+          req.setHeader("Cookie", `paymont-jwt-token=${jwtToken}`);
+        }
+
+        // --- External API: check OAuth2 token validity ---
+        const url = req.getUrl();
+        if (url.includes('/api/v1/') && !url.includes('/oauth2/token')) {
+          const accessToken = bru.getEnvVar("accessToken");
+          if (!accessToken) {
+            console.log("WARNING: accessToken is empty. Run 'External/Auth/Get Token.bru' first.");
+          } else {
+            // Check JWT expiry
+            try {
+              const payload = JSON.parse(atob(accessToken.split('.')[1]));
+              const expiresAt = payload.exp * 1000;
+              const remaining = Math.round((expiresAt - Date.now()) / 1000);
+              if (remaining <= 0) {
+                console.log("WARNING: accessToken EXPIRED. Run 'External/Auth/Get Token.bru' to refresh.");
+              } else if (remaining < 300) {
+                console.log("WARNING: accessToken expires in", remaining, "s — consider refreshing soon.");
+              }
+            } catch (e) {
+              // non-JWT token (e.g. Ory opaque token) — skip expiry check
+            }
+          }
+        }
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-04-09T17:19:54.730Z'
+    exportedUsing: Bruno

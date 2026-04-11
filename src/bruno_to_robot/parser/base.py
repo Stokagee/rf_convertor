@@ -37,3 +37,14 @@ class BaseParser(ABC):
         path = Path(path)
         content = path.read_text(encoding="utf-8")
         return self.parse(content)
+
+    def parse_path(self, path: str | Path) -> BrunoCollection:
+        """Parse an input path into BrunoCollection.
+
+        The default implementation supports file-based parsers.
+        Directory-aware parsers can override this method.
+        """
+        path = Path(path)
+        if path.is_dir():
+            raise IsADirectoryError(f"Directory input is not supported: {path}")
+        return self.parse_file(path)

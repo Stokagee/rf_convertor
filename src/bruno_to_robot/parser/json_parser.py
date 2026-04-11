@@ -19,8 +19,8 @@ class JsonParser(BaseParser):
     Delegates most parsing logic to YamlParser since the data model is the same.
     """
 
-    def __init__(self) -> None:
-        self._yaml_parser = YamlParser()
+    def __init__(self, environment_name: str | None = None) -> None:
+        self._yaml_parser = YamlParser(environment_name=environment_name)
 
     def parse(self, content: str) -> BrunoCollection:
         """Parse JSON content into BrunoCollection."""

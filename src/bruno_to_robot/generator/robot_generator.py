@@ -117,21 +117,30 @@ class RobotGenerator:
         self,
         helpers: list,
         output_path: str | Path,
+        suite_name: str = "Helper Library",
     ) -> None:
         """Generate a Python helper library file.
 
         Args:
             helpers: List of PreRequestHelper objects
             output_path: Path to output .py file
+            suite_name: Name of the owning Robot suite
         """
         if not helpers:
             return
 
         template = self.env.get_template("helpers.py.jinja")
 
-        content = template.render(helpers=helpers)
+        content = template.render(helpers=helpers, suite_name=suite_name)
 
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        if output_path.exists() and output_path.is_file():
+            existing = output_path.read_text(encoding="utf-8")
+            if existing == content:
+                logger.info(f"No changes to {output_path}")
+                return
+
         output_path.write_text(content, encoding="utf-8")
         logger.info(f"Generated helper library {output_path}")

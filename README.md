@@ -19,23 +19,128 @@ pip install -e ".[dev]"
 ## Quick Start
 
 ```bash
-# Convert a Bruno collection
+# Convert an OpenCollection YAML export
 bruno-to-robot -i collection.yaml -o tests/api.robot
 
-# Convert with split output (one file per folder)
-bruno-to-robot -i collection.yaml -o tests/ --split
+# Convert a Bruno directory directly
+bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client --split
+
+# Generate one .robot per Bruno request path
+bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client --split-mode request-tree
+
+# Convert a single `.bru` request
+bruno-to-robot -i "requests/Get Health.bru" -o tests/health.robot
 
 # Convert with separate resource file
 bruno-to-robot -i collection.yaml -o tests/api.robot --resource resources/variables.robot
 ```
 
+When `--resource` is used, generated suites import that file and shared variables are moved out of per-suite `*** Variables ***` blocks.
+
 ## Input Formats
 
-Supports Bruno export formats:
+Supports these inputs:
 
-- **OpenCollection YAML** (recommended) - most structured
-- **Bruno JSON export** - standard JSON format
-- **Postman JSON** - compatible format
+- **OpenCollection YAML** via `.yaml` / `.yml`
+- **OpenCollection JSON** via `.json`
+- **Direct Bruno request** via single `.bru`
+- **Direct Bruno collection directory** with request `.bru` files, optional `collection.bru`, `folder.bru`, `environments/*.bru`, and optional `bruno.json`
+
+## Direct Bruno Support
+
+Direct Bruno parsing is intentionally MVP-scoped. The current `.bru` support covers:
+
+- `meta/name`
+- HTTP method blocks like `get {}` or `post {}`
+- `url`
+- `headers`
+- `params:query`
+- `body:*`
+- `auth:*` subset needed by the current mapper
+- collection variables from `collection.bru` via `vars:pre-request`
+- folder metadata from `folder.bru`
+- folder structure derived from the filesystem
+- environment selection from `environments/*.bru` via `--env`
+- disabled native Bruno variables prefixed with `~` are ignored
+- JSON or docs content with `{}` inside string literals is parsed safely
+
+Current out-of-scope or partial areas:
+
+- full native Bruno parity
+- inheritance semantics beyond the selected env file
+- scripts and assertions from direct `.bru` input are rejected fail-fast
+- advanced auth flows in native `.bru` format
+- full Bruno metadata coverage
+- local native Bruno variables prefixed with `@` are rejected fail-fast
+- unsupported sections in `collection.bru`, `folder.bru`, or `environments/*.bru` are rejected fail-fast
+- disabled and duplicate header or param semantics
+
+## Environment Selection
+
+If your source defines multiple Bruno environments, you can select exactly one:
+
+```bash
+bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client
+```
+
+The selected environment affects collection variables, derived `BASE_URL`, and split-build cache invalidation.
+
+For native Bruno directories:
+
+- `vars {}` from the selected `environments/<name>.bru` file are applied
+- `~disabledVar` entries are skipped
+- `@localVar` entries are not currently supported and stop the parse with an error
+
+## Split Build Cache
+
+When the input is a Bruno directory and `--split` is enabled, the converter keeps a small manifest in the output directory and reuses unchanged suite outputs on the next run.
+
+The cache invalidates when:
+
+- a `.bru` request changes inside a tracked top-level folder
+- a root-level `.bru` request changes
+- the selected environment name changes
+- the selected environment file content changes
+- `bruno.json` changes
+- `collection.bru` changes
+- `--base-url`, `--session-name`, or other build options change
+- the converter build signature version changes
+
+Stale split outputs are also removed when the corresponding top-level folder or root request suite disappears.
+
+## Output Layout Planning
+
+For large Bruno collections you can choose how suites are split:
+
+- `--split-mode single` - one output suite
+- `--split-mode top-folder` - legacy `--split` behavior
+- `--split-mode request-tree` - one request file -> one `.robot` file
+- `--split-mode flow-folder` - one leaf flow folder -> one ordered `.robot` suite
+
+Route specific branches to a different mode:
+
+```bash
+bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client \
+  --split-mode request-tree \
+  --layout-rule "Flows=flow-folder"
+```
+
+`--layout-rule` accepts both plain path-prefix rules and wildcard patterns (for example `Flows/*=flow-folder`). Rule matching is case-insensitive.
+
+Or load rules from config:
+
+```bash
+bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client --layout-config layout.yaml
+```
+
+If `--layout-config` is omitted and the input is a Bruno directory, the CLI auto-loads the first existing file from:
+
+- `bruno-to-robot.layout.yaml`
+- `bruno-to-robot.layout.yml`
+- `.bruno-to-robot.layout.yaml`
+- `.bruno-to-robot.layout.yml`
+
+Tip: combine request-tree output with `--resource` to keep many small suites lightweight while sharing one variables file.
 
 ## Output Structure
 
@@ -64,10 +169,10 @@ Get Users
 | Basic Auth | `Create Session ... auth=${USER}:${PASS}` |
 | Bearer Token | `Authorization: Bearer ${TOKEN}` header |
 | API Key | Custom header or query param |
-| OAuth 2.0 | Custom keyword (placeholder) |
+| OAuth 2.0 | Custom keyword flow |
 | Client Certificate | `Create Session ... cert=(${CERT}, ${KEY})` |
 
-**Important:** Secrets are never hardcoded. Use environment variables or Robot variable files.
+Important: secrets are never hardcoded. Use environment variables or Robot variable files.
 
 ## Assertion Conversion
 
@@ -87,18 +192,34 @@ Complex scripts require manual conversion and are marked with TODO comments.
 Usage: bruno-to-robot [OPTIONS]
 
 Options:
-  -i, --input PATH         Bruno collection file (YAML or JSON) [required]
-  -o, --output PATH        Output .robot file or directory [required]
-  --format [json|yaml]     Force input format (auto-detected by default)
-  --session-name NAME      Session name (default: api)
-  --base-url URL           Override base URL from collection
-  --split / --no-split     Split into multiple .robot files per folder
-  --resource PATH          Generate separate resource file for variables
-  --dry-run                Show what would be generated without writing
-  -v, --verbose            Increase verbosity
-  -q, --quiet              Only show errors
-  --version                Show version
-  --help                   Show this message
+  -i, --input PATH          Path to Bruno collection file, Bruno request, or
+                            Bruno collection directory [required]
+  -o, --output PATH         Path to output .robot file or directory [required]
+  --format [bru|json|yaml]  Force input format (auto-detected by default)
+  --session-name TEXT       Name for the RequestsLibrary session (default: api)
+  --base-url TEXT           Override base URL from collection
+  --env TEXT                Select a named Bruno environment
+  --split / --no-split      Split into multiple .robot files per folder
+  --split-mode [single|top-folder|request-tree|flow-folder]
+                            Output layout mode for generated .robot files
+  --layout-rule TEXT        Route one source path prefix to a split mode
+                            using PATH_PREFIX=SPLIT_MODE
+  --layout-config PATH      Load default split mode and layout rules from a
+                            YAML config file
+  --resource PATH           Generate separate resource file for variables
+  --dry-run                 Show what would be generated without writing files
+  -v, --verbose             Increase verbosity (can be used multiple times)
+  -q, --quiet               Decrease verbosity (only errors)
+  --version                 Show version
+  --help                    Show this message and exit
+```
+
+## Windows Note
+
+If your environment has an unreliable system temp directory, certificate conversion can be pointed to a known writable directory with:
+
+```powershell
+$env:BRUNO_TO_ROBOT_TEMP_DIR = "C:\work\rf-temp"
 ```
 
 ## Development
@@ -127,17 +248,18 @@ ruff format src/
 
 ```
 src/bruno_to_robot/
-├── cli.py           # Click CLI entry point
-├── parser/          # YAML/JSON parsing
-├── models/          # Pydantic data models
-├── mapper/          # Bruno → Robot transformation
-├── generator/       # Jinja2 template rendering
-└── templates/       # .robot Jinja2 templates
+|-- cli.py           # Click CLI entry point
+|-- parser/          # YAML/JSON/.bru parsing
+|-- models/          # Pydantic data models
+|-- mapper/          # Bruno -> Robot transformation
+|-- generator/       # Jinja2 template rendering
+|-- library/         # Runtime helpers for OAuth2 and certificates
+`-- templates/       # .robot and helper templates
 
 tests/
-├── fixtures/        # Sample Bruno collections
-├── unit/            # Unit tests per module
-└── integration/     # Full pipeline tests
+|-- fixtures/        # Sample Bruno collections
+|-- unit/            # Unit tests per module
+`-- integration/     # Full pipeline tests
 ```
 
 ## License

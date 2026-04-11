@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -23,10 +22,11 @@ class TestCertManager:
         return CertManager()
 
     @pytest.fixture
-    def temp_dir(self) -> Path:
-        """Create temporary directory for test files."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
+    def temp_dir(self, tmp_path: Path) -> Path:
+        """Create temporary directory for test files inside the workspace."""
+        path = tmp_path / "cert_manager"
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
     # ========================================================================
     # SSL Verification Configuration
@@ -108,6 +108,37 @@ class TestCertManager:
         # Implementation uses .pem extension
         assert cert_tuple[0].endswith(".pem")
         assert cert_tuple[1].endswith(".pem")
+
+    @patch("bruno_to_robot.library.cert_manager.pkcs12.load_key_and_certificates")
+    def test_load_pkcs12_certificate_uses_configured_temp_dir(
+        self,
+        mock_load: MagicMock,
+        cert_manager: CertManager,
+        temp_dir: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Configured temp dir should be used when no explicit output_dir is given."""
+        mock_cert = MagicMock()
+        mock_cert.public_bytes.return_value = (
+            b"-----BEGIN CERTIFICATE-----\ncert\n-----END CERTIFICATE-----\n"
+        )
+        mock_key = MagicMock()
+        mock_key.private_bytes.return_value = (
+            b"-----BEGIN PRIVATE KEY-----\nkey\n-----END PRIVATE KEY-----\n"
+        )
+        mock_load.return_value = (mock_key, mock_cert, None)
+
+        p12_path = temp_dir / "configured.p12"
+        p12_path.write_bytes(b"p12_content")
+        monkeypatch.setenv("BRUNO_TO_ROBOT_TEMP_DIR", str(temp_dir))
+
+        cert_path, key_path = cert_manager.load_pkcs12_certificate(
+            p12_path=str(p12_path),
+            password="test_password",
+        )
+
+        assert Path(cert_path).parent == temp_dir
+        assert Path(key_path).parent == temp_dir
 
     @patch("bruno_to_robot.library.cert_manager.pkcs12.load_key_and_certificates")
     def test_load_pkcs12_certificate_with_chain(

@@ -1,0 +1,29 @@
+opencollection: 1.0.0
+info:
+  name: Paymont Api Collection
+config:
+  environments:
+    - name: devel
+      variables:
+        - name: baseUrl
+          value: https://dev.example.com
+        - name: username
+          value: dev-user
+    - name: test_client
+      variables:
+        - name: baseUrl
+          value: https://client.example.com
+        - name: baseUrlInternal
+          value: https://internal.example.com
+        - name: accessToken
+          value: ""
+        - name: clientCert
+          value: test-cert
+items:
+  - info:
+      name: Health Check
+      type: http
+      seq: 1
+    http:
+      method: GET
+      url: "{{baseUrl}}/health"

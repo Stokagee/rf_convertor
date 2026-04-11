@@ -72,8 +72,7 @@ class RequestMapper:
         Returns:
             List of RobotSuite models
         """
-        # Detect all base URLs from variables and requests
-        self._detect_url_sessions(collection)
+        self.prepare_collection(collection)
 
         suites = []
 
@@ -94,6 +93,96 @@ class RequestMapper:
 
         return suites
 
+    def prepare_collection(self, collection: BrunoCollection) -> None:
+        """Prepare mapper state for a fresh mapping session."""
+        self._detect_url_sessions(collection)
+        self._pre_request_helpers = []
+        self._token_var_map = {}
+        self._header_var_map = {}
+        self._form_var_map = {}
+
+    def map_request_suite(
+        self,
+        collection: BrunoCollection,
+        request: BrunoRequest,
+        folder: BrunoFolder | None = None,
+    ) -> RobotSuite:
+        """Map a single Bruno request into its own Robot suite."""
+        if not self.url_sessions:
+            self.prepare_collection(collection)
+
+        helper_start = len(self._pre_request_helpers)
+        variables = self._extract_variables(collection)
+        test_case = self._map_request(request, collection, folder)
+        keywords = self._generate_session_keywords()
+        settings = {
+            "suite_setup": "Create All Sessions",
+            "suite_teardown": "Delete All Sessions",
+        }
+
+        helper_functions = [
+            helper.function_name
+            for helper in self._pre_request_helpers[helper_start:]
+        ]
+        helper_library = None
+        if helper_functions:
+            helper_library = (
+                f"{self._sanitize_name(request.name).lower().replace(' ', '_')}_helpers"
+            )
+
+        return RobotSuite(
+            name=self._sanitize_name(request.name),
+            variables=variables,
+            test_cases=[test_case],
+            keywords=keywords,
+            settings=settings,
+            helper_library=helper_library,
+            helper_functions=helper_functions,
+        )
+
+    def map_flow_suite(
+        self,
+        collection: BrunoCollection,
+        requests: list[BrunoRequest],
+        folder: BrunoFolder,
+    ) -> RobotSuite:
+        """Map an ordered list of Bruno requests into one flow suite."""
+        if not self.url_sessions:
+            self.prepare_collection(collection)
+
+        helper_start = len(self._pre_request_helpers)
+        variables = self._extract_variables(collection)
+        test_cases = [
+            self._map_request(request, collection, folder)
+            for request in requests
+        ]
+        keywords = self._generate_session_keywords()
+        settings = {
+            "suite_setup": "Create All Sessions",
+            "suite_teardown": "Delete All Sessions",
+        }
+
+        helper_functions = [
+            helper.function_name
+            for helper in self._pre_request_helpers[helper_start:]
+        ]
+        helper_library = None
+        if helper_functions:
+            helper_library = (
+                f"{self._sanitize_name(folder.name).lower().replace(' ', '_')}_helpers"
+            )
+
+        return RobotSuite(
+            name=self._sanitize_name(folder.name),
+            variables=variables,
+            test_cases=test_cases,
+            keywords=keywords,
+            settings=settings,
+            helper_library=helper_library,
+            helper_functions=helper_functions,
+            preserve_test_order=True,
+        )
+
     def _detect_url_sessions(self, collection: BrunoCollection) -> None:
         """Detect all unique base URLs and assign session aliases."""
         # Reset sessions for fresh detection
@@ -102,6 +191,8 @@ class RequestMapper:
         # Extract URL variables from collection
         url_vars = {}
         for var in collection.variables:
+            if not var.enabled:
+                continue
             var_lower = var.name.lower()
             if "url" in var_lower and var.value:
                 url_vars[var.name.upper()] = str(var.value)
@@ -241,9 +332,7 @@ class RequestMapper:
 
         # Map folder requests
         for folder in collection.folders:
-            for request in folder.requests:
-                tc = self._map_request(request, collection, folder)
-                test_cases.append(tc)
+            self._collect_single_suite_test_cases(collection, folder, test_cases)
 
         # Generate keywords for all detected sessions
         keywords = self._generate_session_keywords()
@@ -256,8 +345,10 @@ class RequestMapper:
 
         # Determine helper library name
         helper_library = None
+        helper_functions = []
         if self._pre_request_helpers:
             helper_library = f"{self._sanitize_name(collection.name).lower().replace(' ', '_')}_helpers"
+            helper_functions = [helper.function_name for helper in self._pre_request_helpers]
 
         return RobotSuite(
             name=self._sanitize_name(collection.name),
@@ -266,7 +357,22 @@ class RequestMapper:
             keywords=keywords,
             settings=settings,
             helper_library=helper_library,
+            helper_functions=helper_functions,
         )
+
+    def _collect_single_suite_test_cases(
+        self,
+        collection: BrunoCollection,
+        folder: BrunoFolder,
+        test_cases: list[RobotTestCase],
+    ) -> None:
+        """Recursively collect test cases for single-suite output."""
+        for request in folder.requests:
+            tc = self._map_request(request, collection, folder)
+            test_cases.append(tc)
+
+        for nested in folder.folders:
+            self._collect_single_suite_test_cases(collection, nested, test_cases)
 
     def get_helpers(self) -> list:
         """Get all collected pre-request helpers.
@@ -339,6 +445,7 @@ class RequestMapper:
         folder: BrunoFolder,
     ) -> RobotSuite:
         """Map a single folder to a Robot suite."""
+        helper_start = len(self._pre_request_helpers)
         variables = self._extract_variables(collection)
         test_cases = []
 
@@ -360,16 +467,29 @@ class RequestMapper:
             "suite_teardown": "Delete All Sessions",
         }
 
+        helper_functions = [
+            helper.function_name
+            for helper in self._pre_request_helpers[helper_start:]
+        ]
+        helper_library = None
+        if helper_functions:
+            helper_library = (
+                f"{self._sanitize_name(folder.name).lower().replace(' ', '_')}_helpers"
+            )
+
         return RobotSuite(
             name=self._sanitize_name(folder.name),
             variables=variables,
             test_cases=test_cases,
             keywords=keywords,
             settings=settings,
+            helper_library=helper_library,
+            helper_functions=helper_functions,
         )
 
     def _map_root_requests(self, collection: BrunoCollection) -> RobotSuite:
         """Map root-level requests to a suite."""
+        helper_start = len(self._pre_request_helpers)
         variables = self._extract_variables(collection)
         test_cases = []
 
@@ -386,12 +506,24 @@ class RequestMapper:
             "suite_teardown": "Delete All Sessions",
         }
 
+        helper_functions = [
+            helper.function_name
+            for helper in self._pre_request_helpers[helper_start:]
+        ]
+        helper_library = None
+        if helper_functions:
+            helper_library = (
+                f"{self._sanitize_name(collection.name).lower().replace(' ', '_')}_helpers"
+            )
+
         return RobotSuite(
             name=self._sanitize_name(collection.name),
             variables=variables,
             test_cases=test_cases,
             keywords=keywords,
             settings=settings,
+            helper_library=helper_library,
+            helper_functions=helper_functions,
         )
 
     def _map_request(
@@ -864,6 +996,8 @@ class RequestMapper:
 
         # Collection variables (skip base_url as it's already added)
         for var in collection.variables:
+            if not var.enabled:
+                continue
             rf_name = self._bruno_var_to_robot(var.name)
 
             # Skip base_url variants - already added above

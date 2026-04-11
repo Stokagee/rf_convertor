@@ -1,0 +1,25 @@
+name: Scripted API Collection
+version: "1.0"
+baseUrl: https://api.example.com
+folders:
+  - name: Users
+    path: /users
+    requests:
+      - info:
+          name: Create Random User
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: https://api.example.com/users
+          body:
+            type: json
+            data: |-
+              {}
+        runtime:
+          scripts:
+            - type: before-request
+              code: |-
+                const body = {};
+                body.email = 'user@test.cz';
+                req.setBody(JSON.stringify(body));

@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from bruno_to_robot.models.bruno import (
     AuthType,
     BrunoAuth,

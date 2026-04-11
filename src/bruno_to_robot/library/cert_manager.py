@@ -25,6 +25,7 @@ import os
 import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization
@@ -68,9 +69,10 @@ class CertManager:
     ROBOT_LIBRARY_SCOPE = "SUITE"
     ROBOT_LIBRARY_DOC_FORMAT = "ROBOT"
 
-    def __init__(self) -> None:
+    def __init__(self, temp_dir: str | None = None) -> None:
         """Initialize certificate manager."""
         self._temp_files: list[Path] = []
+        self._configured_temp_dir = temp_dir or os.getenv("BRUNO_TO_ROBOT_TEMP_DIR")
 
     # ========================================================================
     # PEM Certificate Loading
@@ -193,17 +195,14 @@ class CertManager:
             if chain_file.exists():
                 cert_content += b"\n" + chain_file.read_bytes()
 
-        # Write combined certificate to temp file
-        with tempfile.NamedTemporaryFile(
-            mode="wb",
+        temp_cert_path = self._create_temp_output_path(
+            base_name=Path(cert_path).stem,
             suffix=".crt",
-            delete=False,
-        ) as temp_cert:
-            temp_cert.write(cert_content)
-            temp_cert_path = temp_cert.name
+        )
+        temp_cert_path.write_bytes(cert_content)
 
-        self._temp_files.append(Path(temp_cert_path))
-        return (temp_cert_path, key_path)
+        self._temp_files.append(temp_cert_path)
+        return (str(temp_cert_path), key_path)
 
     # ========================================================================
     # PKCS#12 Certificate Loading
@@ -266,17 +265,12 @@ class CertManager:
                     cert_path=p12_path,
                 )
 
-            # Determine output directory
-            if output_dir:
-                out_dir = Path(output_dir)
-                out_dir.mkdir(parents=True, exist_ok=True)
-            else:
-                out_dir = Path(tempfile.gettempdir())
+            out_dir = self._resolve_output_dir(output_dir)
 
             # Generate output filenames
             base_name = p12_file.stem
-            cert_out = out_dir / f"{base_name}_cert.pem"
-            key_out = out_dir / f"{base_name}_key.pem"
+            cert_out = self._build_output_path(out_dir, f"{base_name}_cert", ".pem", output_dir)
+            key_out = self._build_output_path(out_dir, f"{base_name}_key", ".pem", output_dir)
 
             # Write certificate
             cert_pem = certificate.public_bytes(serialization.Encoding.PEM)
@@ -346,16 +340,11 @@ class CertManager:
                     cert_path=p12_path,
                 )
 
-            # Determine output directory
-            if output_dir:
-                out_dir = Path(output_dir)
-                out_dir.mkdir(parents=True, exist_ok=True)
-            else:
-                out_dir = Path(tempfile.gettempdir())
+            out_dir = self._resolve_output_dir(output_dir)
 
             base_name = p12_file.stem
-            cert_out = out_dir / f"{base_name}_chain.pem"
-            key_out = out_dir / f"{base_name}_key.pem"
+            cert_out = self._build_output_path(out_dir, f"{base_name}_chain", ".pem", output_dir)
+            key_out = self._build_output_path(out_dir, f"{base_name}_key", ".pem", output_dir)
 
             # Write certificate + chain
             cert_pem = certificate.public_bytes(serialization.Encoding.PEM)
@@ -572,6 +561,61 @@ class CertManager:
             except Exception:
                 pass  # Ignore cleanup errors
         self._temp_files.clear()
+
+    def _resolve_output_dir(self, output_dir: str | None) -> Path:
+        """Resolve a writable directory for generated certificate files."""
+        if output_dir:
+            resolved = Path(output_dir)
+            self._ensure_writable_directory(resolved)
+            return resolved
+
+        for candidate in self._iter_temp_dir_candidates():
+            try:
+                self._ensure_writable_directory(candidate)
+                return candidate
+            except OSError:
+                continue
+
+        raise CertificateError("No writable temporary directory available")
+
+    def _iter_temp_dir_candidates(self) -> list[Path]:
+        """Return fallback temp directory candidates in priority order."""
+        candidates = []
+        configured_temp_dir = self._configured_temp_dir or os.getenv("BRUNO_TO_ROBOT_TEMP_DIR")
+        if configured_temp_dir:
+            candidates.append(Path(configured_temp_dir))
+
+        candidates.append(Path(tempfile.gettempdir()))
+        candidates.append(Path.cwd() / ".bruno_to_robot_tmp")
+        candidates.append(Path.home() / ".bruno_to_robot_tmp")
+        return candidates
+
+    def _ensure_writable_directory(self, path: Path) -> None:
+        """Ensure a directory exists and is writable."""
+        path.mkdir(parents=True, exist_ok=True)
+        probe = path / f".write-test-{uuid4().hex}"
+        try:
+            probe.write_text("ok", encoding="utf-8")
+        finally:
+            if probe.exists():
+                probe.unlink()
+
+    def _create_temp_output_path(self, base_name: str, suffix: str) -> Path:
+        """Create a unique temporary output path in the resolved temp directory."""
+        out_dir = self._resolve_output_dir(output_dir=None)
+        return self._build_output_path(out_dir, base_name, suffix, output_dir=None)
+
+    def _build_output_path(
+        self,
+        out_dir: Path,
+        base_name: str,
+        suffix: str,
+        output_dir: str | None,
+    ) -> Path:
+        """Build either a stable or unique output path depending on caller intent."""
+        if output_dir:
+            return out_dir / f"{base_name}{suffix}"
+        return out_dir / f"{base_name}_{uuid4().hex}{suffix}"
 
     def __del__(self) -> None:
         """Cleanup on deletion."""

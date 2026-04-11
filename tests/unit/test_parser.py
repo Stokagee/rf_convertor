@@ -70,6 +70,30 @@ class TestYamlParser:
         assert base_url_var is not None
         assert base_url_var.value == "https://api.example.com"
 
+    def test_parse_normalizes_multipart_form_body_type(self):
+        """Bruno `multipart-form` should normalize to the internal multipart body type."""
+        parser = YamlParser()
+        content = """
+        info:
+          name: Upload File
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: https://api.example.com/upload
+          body:
+            type: multipart-form
+            data:
+              - name: file
+                value: ./document.pdf
+        """
+
+        collection = parser.parse(content)
+
+        body = collection.requests[0].http.body
+        assert body is not None
+        assert body.type.value == "multipart"
+
 
 class TestJsonParser:
     """Tests for JsonParser."""

@@ -106,9 +106,12 @@ class RobotSuite(BaseModel):
     imports: list[str] = Field(default_factory=lambda: ["RequestsLibrary"])
     helper_library: str | None = None  # Python helper library name (without .py)
     helper_functions: list[str] = Field(default_factory=list)  # Function names to import
+    preserve_test_order: bool = False
 
     def get_sorted_test_cases(self) -> list[RobotTestCase]:
         """Return test cases sorted by name for idempotency."""
+        if self.preserve_test_order:
+            return list(self.test_cases)
         return sorted(self.test_cases, key=lambda tc: tc.name)
 
     def get_sorted_variables(self) -> list[RobotVariable]:
