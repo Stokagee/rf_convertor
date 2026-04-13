@@ -3,7 +3,13 @@
 import pytest
 
 from bruno_to_robot.generator.robot_generator import RobotGenerator
-from bruno_to_robot.models.robot import RobotStep, RobotSuite, RobotTestCase, RobotVariable
+from bruno_to_robot.models.robot import (
+    RobotResource,
+    RobotStep,
+    RobotSuite,
+    RobotTestCase,
+    RobotVariable,
+)
 
 
 class TestRobotGenerator:
@@ -192,3 +198,29 @@ Library           RequestsLibrary
         content = init_path.read_text(encoding="utf-8")
         assert "*** Settings ***" in content
         assert "Resource          _shared/common_keywords.robot" in content
+
+    def test_generate_resource_preserves_line_breaks_for_variables_and_keywords(self, tmp_path):
+        """Generated resource file should keep valid Robot section and keyword line structure."""
+        generator = RobotGenerator()
+        output = tmp_path / "shared" / "common.resource"
+        resource = RobotResource(
+            name="Shared",
+            variables=[
+                RobotVariable(name="BASE_URL", value="https://api.example.com"),
+            ],
+            keywords={
+                "Create All Sessions": [
+                    RobotStep(
+                        keyword="Create Session",
+                        args=["alias=api", "url=${BASE_URL}", "verify=${TRUE}"],
+                    ),
+                ]
+            },
+        )
+
+        generator.generate_resource(resource, output)
+        content = output.read_text(encoding="utf-8")
+
+        assert "*** Variables ***\n${BASE_URL}" in content
+        assert "\n*** Keywords ***\n" in content
+        assert "Create All Sessions\n    Create Session" in content

@@ -1,0 +1,17 @@
+{
+  "build_signature": "502170c7d67c0d2bb8edf5a512c5e5e3a0c114e45b6ddeb58ed91fee8bc2656e",
+  "suites": {
+    "flows/client_api_flow/get_oauth2_token.robot": {
+      "fingerprint": "24b1755bf17d15be70f598fd27be67aac9a8d87b198dca4276af245b7406de5f",
+      "mode": "request-tree"
+    },
+    "flows/client_api_flow/list_customers.robot": {
+      "fingerprint": "3269ef18c11f831f1844ef4244c56e26e49aa6c1e33969a4d741aa3f8969bf82",
+      "mode": "request-tree"
+    },
+    "health_check.robot": {
+      "fingerprint": "4697157c05d40e891962c11650426232118198c40d6cbe3a4d23d174e24c2dac",
+      "mode": "request-tree"
+    }
+  }
+}

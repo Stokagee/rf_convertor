@@ -3,18 +3,18 @@
   Contains shared variables and keywords.
 -#}
 *** Variables ***
-{%- for var in resource.variables %}
+{% for var in resource.variables %}
 {{ var.to_robot_line() }}
-{%- endfor %}
+{% endfor %}
 
-{%- if resource.keywords %}
+{% if resource.keywords %}
 
 *** Keywords ***
-{%- for kw_name, kw_steps in resource.keywords.items() %}
+{% for kw_name, kw_steps in resource.keywords.items() %}
 
 {{ kw_name }}
-{%- for step in kw_steps %}
+{% for step in kw_steps %}
     {{ step.to_robot_line() }}
-{%- endfor %}
-{%- endfor %}
-{%- endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
