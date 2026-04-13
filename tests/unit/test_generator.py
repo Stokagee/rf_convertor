@@ -180,3 +180,15 @@ Library           RequestsLibrary
         alpha_pos = content.find("ALPHA")
         zebra_pos = content.find("ZEBRA")
         assert alpha_pos < zebra_pos
+
+    def test_generate_init_file_creates_resource_import(self, generator: RobotGenerator, tmp_path):
+        """Generator should create an `__init__.robot` file with the requested resource import."""
+        output_dir = tmp_path / "generated"
+
+        generator.generate_init_file(output_dir, resource_import="_shared/common_keywords.robot")
+
+        init_path = output_dir / "__init__.robot"
+        assert init_path.exists()
+        content = init_path.read_text(encoding="utf-8")
+        assert "*** Settings ***" in content
+        assert "Resource          _shared/common_keywords.robot" in content

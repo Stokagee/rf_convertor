@@ -21,6 +21,7 @@ class BuildOptions:
     session_name: str = "api"
     input_format: str | None = None
     resource_path: str | None = None
+    init_layering: bool = False
 
 
 class BuildCache:

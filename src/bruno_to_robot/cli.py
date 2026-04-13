@@ -278,6 +278,13 @@ def build_shared_resource_from_suites(suites: list[RobotSuite]) -> RobotResource
     )
 
 
+def add_resource_import(suite: RobotSuite, resource_import: str) -> None:
+    """Attach one resource import path to a suite without duplicating entries."""
+    imports = suite.settings.setdefault("resource_imports", [])
+    if resource_import not in imports:
+        imports.append(resource_import)
+
+
 def apply_shared_resource_to_suites(
     suites: list[RobotSuite],
     suite_output_paths: list[Path],
@@ -287,10 +294,40 @@ def apply_shared_resource_to_suites(
     shared_resource = build_shared_resource_from_suites(suites)
 
     for suite, suite_output in zip(suites, suite_output_paths, strict=True):
-        suite.settings["resource"] = to_resource_import_path(suite_output, resource_path)
+        add_resource_import(suite, to_resource_import_path(suite_output, resource_path))
         suite.variables = []
 
     return shared_resource
+
+
+def build_shared_keywords_resource_from_suites(
+    suites: list[RobotSuite],
+) -> RobotResource | None:
+    """Build one shared keyword resource from deduplicated suite keyword maps."""
+    keywords: dict[str, list] = {}
+    for suite in suites:
+        for keyword_name, keyword_steps in suite.keywords.items():
+            if keyword_name not in keywords:
+                keywords[keyword_name] = keyword_steps
+
+    if not keywords:
+        return None
+
+    return RobotResource(
+        name="Shared Keywords",
+        keywords=keywords,
+    )
+
+
+def apply_shared_keywords_to_suites(
+    suites: list[RobotSuite],
+    suite_output_paths: list[Path],
+    keywords_resource_path: Path,
+) -> None:
+    """Move duplicated suite keywords to one shared resource import."""
+    for suite, suite_output in zip(suites, suite_output_paths, strict=True):
+        add_resource_import(suite, to_resource_import_path(suite_output, keywords_resource_path))
+        suite.keywords = {}
 
 
 def remove_empty_output_dirs(path: Path, stop_at: Path) -> None:
@@ -398,6 +435,11 @@ def detect_format(path: Path) -> str:
     help="Generate separate resource file for variables",
 )
 @click.option(
+    "--init-layering/--no-init-layering",
+    default=False,
+    help="Generate shared keyword resource and __init__.robot for split layouts",
+)
+@click.option(
     "--dry-run",
     is_flag=True,
     help="Show what would be generated without writing files",
@@ -426,6 +468,7 @@ def main(
     layout_rules: tuple[str, ...],
     layout_config_path: Path | None,
     resource_path: Path | None,
+    init_layering: bool,
     dry_run: bool,
     verbose: int,
     quiet: bool,
@@ -587,6 +630,20 @@ def main(
                 suite_output_paths,
                 resource_path,
             )
+        shared_keywords_resource = None
+        shared_keywords_path = output_root / "_shared" / "common_keywords.robot"
+        should_generate_init = (
+            init_layering
+            and resolved_split_mode_enum != SplitMode.SINGLE
+        )
+        if should_generate_init:
+            shared_keywords_resource = build_shared_keywords_resource_from_suites(suites)
+            if shared_keywords_resource is not None:
+                apply_shared_keywords_to_suites(
+                    suites,
+                    suite_output_paths,
+                    shared_keywords_path,
+                )
 
         if dry_run:
             click.echo("Dry run - would generate:")
@@ -594,6 +651,9 @@ def main(
                 click.echo(f"  - {out_file}: {len(suite.test_cases)} tests")
             if resource_path:
                 click.echo(f"  - {resource_path}: shared variables resource")
+            if should_generate_init and shared_keywords_resource is not None:
+                click.echo(f"  - {shared_keywords_path}: shared keywords resource")
+                click.echo(f"  - {output_root / '__init__.robot'}: root init file")
             return
 
         output_root.mkdir(parents=True, exist_ok=True)
@@ -620,6 +680,7 @@ def main(
                     session_name=session_name,
                     input_format=input_format,
                     resource_path=str(resource_path) if resource_path else None,
+                    init_layering=should_generate_init,
                 ),
             )
             cached_manifest = build_cache.load_manifest(output_root)
@@ -691,6 +752,14 @@ def main(
         if resource_path and shared_resource is not None:
             generator.generate_resource(shared_resource, resource_path)
             click.echo(f"Generated resource: {resource_path}")
+        if should_generate_init and shared_keywords_resource is not None:
+            generator.generate_resource(shared_keywords_resource, shared_keywords_path)
+            click.echo(f"Generated shared keywords: {shared_keywords_path}")
+            generator.generate_init_file(
+                output_root,
+                resource_import=shared_keywords_path.relative_to(output_root).as_posix(),
+            )
+            click.echo(f"Generated init: {output_root / '__init__.robot'}")
 
         click.echo(f"\nConversion complete: {sum(len(s.test_cases) for s in suites)} test cases")
 

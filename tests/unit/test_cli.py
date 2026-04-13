@@ -32,6 +32,7 @@ class TestCli:
         assert "--split-mode [single|top-folder|request-tree|flow-folder]" in result.output
         assert "--layout-rule TEXT" in result.output
         assert "--layout-config PATH" in result.output
+        assert "--init-layering / --no-init-layering" in result.output
 
     def test_detect_format_supports_bru_file(self):
         """`.bru` files should auto-detect as Bruno input."""
@@ -1250,6 +1251,93 @@ params:query {
             in nested_suite.read_text(encoding="utf-8")
         )
         assert "${BASE_URL}" in resource_content
+
+    def test_cli_request_tree_init_layering_generates_shared_keywords_and_root_init_file(
+        self,
+        bru_collection_dir: Path,
+        tmp_path: Path,
+    ):
+        """Init layering should move suite keywords to shared resource and create `__init__.robot`."""
+        runner = CliRunner()
+        output_dir = tmp_path / "generated"
+
+        result = runner.invoke(
+            main,
+            [
+                "-i",
+                str(bru_collection_dir),
+                "-o",
+                str(output_dir),
+                "--env",
+                "test_client",
+                "--split-mode",
+                "request-tree",
+                "--init-layering",
+            ],
+        )
+
+        assert result.exit_code == 0
+
+        shared_keywords = output_dir / "_shared" / "common_keywords.robot"
+        root_init = output_dir / "__init__.robot"
+        root_suite = output_dir / "health_check.robot"
+        nested_suite = output_dir / "flows" / "client_api_flow" / "get_oauth2_token.robot"
+
+        assert shared_keywords.exists()
+        assert root_init.exists()
+
+        root_content = root_suite.read_text(encoding="utf-8")
+        nested_content = nested_suite.read_text(encoding="utf-8")
+        init_content = root_init.read_text(encoding="utf-8")
+
+        assert "*** Keywords ***" not in root_content
+        assert "Resource          _shared/common_keywords.robot" in root_content
+        assert "Resource          ../../_shared/common_keywords.robot" in nested_content
+        assert "Resource          _shared/common_keywords.robot" in init_content
+
+    def test_cli_request_tree_rebuilds_cached_suites_when_init_layering_option_changes(
+        self,
+        bru_collection_dir: Path,
+        tmp_path: Path,
+    ):
+        """Turning on init layering should invalidate split cache and regenerate suite files."""
+        runner = CliRunner()
+        input_root = tmp_path / "bru_input"
+        output_dir = tmp_path / "generated"
+        shutil.copytree(bru_collection_dir, input_root)
+
+        first = runner.invoke(
+            main,
+            [
+                "-i",
+                str(input_root),
+                "-o",
+                str(output_dir),
+                "--env",
+                "test_client",
+                "--split-mode",
+                "request-tree",
+            ],
+        )
+        second = runner.invoke(
+            main,
+            [
+                "-i",
+                str(input_root),
+                "-o",
+                str(output_dir),
+                "--env",
+                "test_client",
+                "--split-mode",
+                "request-tree",
+                "--init-layering",
+            ],
+        )
+
+        assert first.exit_code == 0
+        assert second.exit_code == 0
+        assert f"Generated: {output_dir / 'health_check.robot'}" in second.output
+        assert (output_dir / "_shared" / "common_keywords.robot").exists()
 
     def test_cli_request_tree_rebuilds_cached_suites_when_resource_option_changes(
         self,

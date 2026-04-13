@@ -28,6 +28,9 @@ bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client --split
 # Generate one .robot per Bruno request path
 bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client --split-mode request-tree
 
+# Generate request-tree output with shared keywords/init layering
+bruno-to-robot -i ./my-bruno-collection -o tests/ --env test_client --split-mode request-tree --init-layering
+
 # Convert a single `.bru` request
 bruno-to-robot -i "requests/Get Health.bru" -o tests/health.robot
 
@@ -142,6 +145,8 @@ If `--layout-config` is omitted and the input is a Bruno directory, the CLI auto
 
 Tip: combine request-tree output with `--resource` to keep many small suites lightweight while sharing one variables file.
 
+`--init-layering` adds a shared keyword resource (`_shared/common_keywords.robot`) and root `__init__.robot`, then removes duplicated `*** Keywords ***` sections from generated suite files.
+
 ## Output Structure
 
 Generated `.robot` files follow Robot Framework best practices:
@@ -207,6 +212,9 @@ Options:
   --layout-config PATH      Load default split mode and layout rules from a
                             YAML config file
   --resource PATH           Generate separate resource file for variables
+  --init-layering / --no-init-layering
+                            Generate shared keyword resource and __init__.robot
+                            for split layouts
   --dry-run                 Show what would be generated without writing files
   -v, --verbose             Increase verbosity (can be used multiple times)
   -q, --quiet               Decrease verbosity (only errors)

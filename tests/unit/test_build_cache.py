@@ -275,6 +275,33 @@ class TestBuildCache:
 
         assert first != second
 
+    def test_build_signature_changes_when_init_layering_changes(self, tmp_path: Path):
+        """Init layering toggle must invalidate split build cache."""
+        cache = BuildCache()
+
+        first = cache.compute_build_signature(
+            tmp_path,
+            BuildOptions(
+                environment_name="test_client",
+                split_by_folder=True,
+                split_mode="request-tree",
+                input_format="bru",
+                init_layering=False,
+            ),
+        )
+        second = cache.compute_build_signature(
+            tmp_path,
+            BuildOptions(
+                environment_name="test_client",
+                split_by_folder=True,
+                split_mode="request-tree",
+                input_format="bru",
+                init_layering=True,
+            ),
+        )
+
+        assert first != second
+
     def test_build_signature_changes_when_cache_version_changes(self, tmp_path: Path, monkeypatch):
         """Converter/cache version must be part of the build signature."""
         cache = BuildCache()

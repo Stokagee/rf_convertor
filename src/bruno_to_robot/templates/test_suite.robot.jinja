@@ -9,7 +9,11 @@ Library           {{ imp }}
 {% if suite.helper_library %}
 Library           ${CURDIR}${/}{{ suite.helper_library }}.py
 {% endif %}
-{% if suite.settings.get("resource") %}
+{% if suite.settings.get("resource_imports") %}
+{% for resource_import in suite.settings["resource_imports"] %}
+Resource          {{ resource_import }}
+{% endfor %}
+{% elif suite.settings.get("resource") %}
 Resource          {{ suite.settings["resource"] }}
 {% endif %}
 {% if suite.settings.get("suite_setup") %}

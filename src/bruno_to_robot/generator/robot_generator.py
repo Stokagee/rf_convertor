@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader
 
 from bruno_to_robot.models.robot import RobotResource, RobotSuite
 
@@ -144,3 +144,22 @@ class RobotGenerator:
 
         output_path.write_text(content, encoding="utf-8")
         logger.info(f"Generated helper library {output_path}")
+
+    def generate_init_file(self, output_dir: str | Path, resource_import: str) -> None:
+        """Generate an `__init__.robot` that imports a shared resource."""
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        init_path = output_dir / "__init__.robot"
+        content = (
+            "*** Settings ***\n"
+            f"Resource          {resource_import}\n"
+        )
+
+        if init_path.exists() and init_path.is_file():
+            existing = init_path.read_text(encoding="utf-8")
+            if existing == content:
+                logger.info(f"No changes to {init_path}")
+                return
+
+        init_path.write_text(content, encoding="utf-8")
+        logger.info(f"Generated {init_path}")

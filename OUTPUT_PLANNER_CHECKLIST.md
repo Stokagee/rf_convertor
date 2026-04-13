@@ -38,7 +38,7 @@ large collections without hardcoded assumptions.
 
 - [x] Planner-driven cache scopes
 - [x] Resource layering for shared variables (`--resource` imports in generated suites)
-- [ ] Init layering for shared setup/keywords
+- [x] Init layering for shared setup/keywords
 - [x] Rename/move cleanup for nested output trees
 - [x] Glob or predicate-based route matching
 - [x] Optional user config file for route rules
